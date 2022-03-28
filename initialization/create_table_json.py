@@ -93,6 +93,3 @@ def unannotated_posts():
 
     with open("unannotated_posts.json", "w") as write_file:
         json.dump(unannotated_posts, write_file, indent=4)
-
-
-unannotated_posts()
