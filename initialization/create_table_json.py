@@ -1,4 +1,7 @@
 import json
+import os
+
+OUTPUT_DIR = "initialization/json/"
 
 
 def unannotated_posts():
@@ -91,5 +94,10 @@ def unannotated_posts():
         },
     }
 
-    with open("unannotated_posts.json", "w") as write_file:
+    with open("initialization/json/unannotated_posts.json", "w") as write_file:
         json.dump(unannotated_posts, write_file, indent=4)
+
+
+def create_save_folder_if_not_exist():
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
