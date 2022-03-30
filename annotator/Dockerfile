@@ -5,10 +5,10 @@ FROM python:latest
 LABEL maintainer="morgan.nolan@hotmail.com"
 
 # Copying folder contents
-COPY ["/data_annotator", "/data_annotator/"]
+COPY ["/annotator", "/annotator/"]
 
 # Setting our working directory
-WORKDIR /data_annotator
+WORKDIR /annotator
 
 # Installing required Python libraries
 RUN pip install -r requirements.txt
@@ -17,4 +17,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8080
 
 # Running app.py when container is tarted
-CMD ["python", "data_annotator.py"]
+CMD ["python", "annotator.py"]

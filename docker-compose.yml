@@ -7,10 +7,10 @@ services:
       context: .
       dockerfile: retriever/Dockerfile
   app:
-    container_name: data_annotator
+    container_name: annotator
     build:
       context: .
-      dockerfile: data_annotator/Dockerfile
+      dockerfile: annotator/Dockerfile
     ports:
       - "8080:8080"
     
