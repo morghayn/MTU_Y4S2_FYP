@@ -1,3 +1,7 @@
 def unannotated_posts():
-    print("delete")
+    
+    """
+    # TODO: Verification of process, i.e., type in a phrase or something to successfully continue.
+    """
+
     pass

@@ -10,8 +10,8 @@ def main():
     if arg_length < 2:
         print(
             "--create-json: creates table json files",
-            "--init: initialize insertion\n",
-            "--del: delete unannotated post table\n",
+            "--init-insert: executes initial data insertion\n",
+            "--delete-tables: deletes all tables in database\n",
         )
 
     else:
@@ -19,10 +19,16 @@ def main():
             arg = sys.argv[i]
 
             if arg == "--create-json":
+                print("--init-insert: creating json")
+                create_table_json.create_save_folder_if_not_exist()
                 create_table_json.unannotated_posts()
-            elif arg == "--init":
+
+            elif arg == "--init-insert":
+                print("--init-insert: carrying out initial insertion")
                 initial_insertion.unannotated_posts()
-            elif arg == "--del":
+
+            elif arg == "--delete-tables":
+                print("--delete-tables: deleting tables")
                 delete_table.unannotated_posts()
 
 
