@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  retriever:
+    container_name: retriever
+    build:
+      context: .
+      dockerfile: retriever/Dockerfile
+  app:
+    container_name: data_annotator
+    build:
+      context: .
+      dockerfile: data_annotator/Dockerfile
+    ports:
+      - "8080:8080"
+    
