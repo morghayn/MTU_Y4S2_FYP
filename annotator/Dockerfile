@@ -17,4 +17,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8080
 
 # Running app.py when container is tarted
-CMD ["python", "annotator.py"]
+CMD ["python", "app.py"]

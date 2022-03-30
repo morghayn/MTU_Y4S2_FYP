@@ -6,11 +6,10 @@ services:
     build:
       context: .
       dockerfile: retriever/Dockerfile
-  app:
+  annotator:
     container_name: annotator
     build:
       context: .
       dockerfile: annotator/Dockerfile
     ports:
       - "8080:8080"
-    
