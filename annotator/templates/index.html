@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:100,100i,400,400i,700,700i" rel="stylesheet">
+    <script src="./script.js"></script>
+</head>
+
+<body>
+    <header></header>
+    <main>
+        <div class="meta-data">
+            <input type="hidden" id="id" name="id" value="?">
+            <h2 class="title" id="title">Title: ?</h2>
+            <div class="tags">
+                <p>Content Type: ?</p>
+                <p id="ticker_list">Tickers: ?</p>
+                <p id="subreddit_display_name">Subreddit: ?</p>
+                <p id="author_name">u/?</p>
+                <p id="url">Link: <a href="#" target="_blank">Post Link</a></p>
+            </div>
+        </div>
+        <div class="content">
+            <p id="text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Error fugiat, maiores architecto repellat quisquam similique pariatur eos laborum nulla nobis, quam dolore facilis distinctio ut laboriosam obcaecati aliquam iste blanditiis aperiam.
+                Nesciunt facilis pariatur eveniet magnam illum omnis voluptates ducimus? Facilis deserunt est voluptate sed fugiat illo dolore et repellat aliquam! Sequi, aliquam. Vero laboriosam velit, qui nostrum aperiam eveniet recusandae voluptas
+                nobis officia eos omnis ad quam magnam eligendi suscipit inventore culpa maiores? Dolorem quis laboriosam corrupti dignissimos quos, amet laudantium nostrum maiores voluptate labore molestias neque nobis ab, totam itaque molestiae deserunt
+                blanditiis repellat voluptatibus. Nemo ducimus quae, est fugit, illum dolores dignissimos dolorem cupiditate neque, culpa adipisci.<br><br>Recusandae facere laudantium magnam ratione at tempora ea, dolores sunt asperiores quo hic maxime
+                assumenda quam et praesentium quas ducimus ullam totam! Iste nemo hic in ex, adipisci blanditiis animi velit aspernatur? Iusto temporibus quam eos, sed iure accusantium dolor. Facilis quas consectetur necessitatibus quidem maxime hic nemo
+                tempore ipsum!
+            </p>
+        </div>
+        <div class="evaluator">
+            <div>
+                <button class="bullish" onclick="process_evaluation(1)">Bullish</button>
+                <button class="neutral" onclick="process_evaluation(0)">Neutral</button>
+                <button class="bearish" onclick="process_evaluation(-1)">Bearish</button>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
