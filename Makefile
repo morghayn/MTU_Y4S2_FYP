@@ -4,6 +4,9 @@ USER=morgan
 PYENV_PATH=/home/${USER}/.pyenv/versions/${PYTHON_VERSION}/bin/python
 
 
+wsl-host:
+	./wsl_host.sh
+
 install:
 	${PYENV_PATH} \
 	initialization/run.py --create-json --init-insert --delete-tables
