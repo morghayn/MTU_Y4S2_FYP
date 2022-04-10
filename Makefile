@@ -7,9 +7,9 @@ PYENV_PATH=/home/${USER}/.pyenv/versions/${PYTHON_VERSION}/bin/python
 wsl-host:
 	./wsl_host.sh
 
-install:
+install: wsl-host
 	${PYENV_PATH} \
-	initialization/run.py --create-json --init-insert --delete-tables
+	initialization/run.py --drop-tables --create-json --init-insert
 
 
 update: clean build start

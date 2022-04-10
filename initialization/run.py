@@ -1,17 +1,21 @@
 import sys
-import initial_insertion
-import delete_table
+
 import create_table_json
+import database
+
+TABLES = ["unannotated_posts"]
 
 
 def main():
     arg_length = len(sys.argv)
+    db = database.Connection()
 
     if arg_length < 2:
         print(
             "--create-json: creates table json files",
             "--init-insert: executes initial data insertion\n",
             "--delete-tables: deletes all tables in database\n",
+            "--debug: utilized for development\n",
         )
 
     else:
@@ -21,15 +25,21 @@ def main():
             if arg == "--create-json":
                 print("--init-insert: creating json")
                 create_table_json.create_save_folder_if_not_exist()
-                create_table_json.unannotated_posts()
+                for table in TABLES:
+                    create_table_json.export(table)
 
             elif arg == "--init-insert":
                 print("--init-insert: carrying out initial insertion")
-                initial_insertion.unannotated_posts()
+                # TODO
 
-            elif arg == "--delete-tables":
+            elif arg == "--drop-tables":
                 print("--delete-tables: deleting tables")
-                delete_table.unannotated_posts()
+                for table in TABLES:
+                    db.drop_table(table)
+
+            elif arg == "--debug":
+                print("--debug: debugging implementation")
+                # DEBUG
 
 
 if __name__ == "__main__":
