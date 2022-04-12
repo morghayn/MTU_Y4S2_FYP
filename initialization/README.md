@@ -15,3 +15,6 @@ Is this making our data biased? Perhaps. But we can deduce we will be retrieving
 
 ## Dangers of the delete table command.
 The delete table command is dangerous and is recognized as such. Measures to prevent accidental deletion will be implemented as this project progresses.
+
+## Column retrieval of database.py
+Database.py knows the column names of each table by reading the raw create table query. Without this, database.py will not know of the column names of a table as we do not fetch this data from SQL through a query (obviously).
