@@ -121,3 +121,11 @@ class Connection:
             )
         except mariadb.Error as e:
             print(f"Could not create table: {e}")
+    
+    def get_columns_list(self, table_name):
+        """
+        Used to return list of all columns for specific table in database.
+        """
+        # TODO: Check if table_name exists...
+        return self.tables[table_name]
+
