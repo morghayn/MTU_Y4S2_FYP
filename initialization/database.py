@@ -38,7 +38,6 @@ def compile_query(table_name, primary_key_name):
 
     keys = table["PRIMARY_KEYS"]
     query += f"\tCONSTRAINT {primary_key_name} PRIMARY KEY ({','.join([str(key) for key in keys])})\n)\n"
-    print(query)
     return query
 
 
@@ -80,12 +79,13 @@ class Connection:
             self.cursor.execute(
                 f"INSERT INTO {table_name} ({','.join([str(x) for x in columns])})"
                 + f" VALUES ({','.join(['?' for x in columns])})",
-                tuple([data[column] for column in columns]),
+                tuple([data[i] for i in range(0, len(columns))]),
             )
             self.conn.commit()
             print("Sucessfully inserted row.")
         except mariadb.Error as e:
             print(f"Could not insert row: {e}")
+            # print(tuple([data[i] for i in range(0, len(columns))])) # For debug purposes
 
     def retrieve_all(self, table_name):
         try:
@@ -109,23 +109,26 @@ class Connection:
     def drop_table(self, table_name):
         try:
             self.cursor.execute("DROP TABLE " + table_name)
+            print(f"Successfully dropped table '{table_name}'.")
         except mariadb.Error as e:
             print(f"Could not drop table: {e}")
 
     def create_table(self, table_name, primary_key_name="id"):
         query = compile_query(table_name, primary_key_name)
+        # print(query) # For debug purposes
+
         try:
             self.cursor.execute(query)
             self.cursor.execute(
                 f"ALTER TABLE {table_name} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
             )
+            print(f"Successfully created table '{table_name}'.")
         except mariadb.Error as e:
             print(f"Could not create table: {e}")
-    
+
     def get_columns_list(self, table_name):
         """
         Used to return list of all columns for specific table in database.
         """
         # TODO: Check if table_name exists...
         return self.tables[table_name]
-
