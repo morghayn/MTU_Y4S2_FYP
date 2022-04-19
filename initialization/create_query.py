@@ -32,12 +32,8 @@ def export_all():
 
 
 def compile(table_name, primary_key_name):
-    try:
-        with open(f"{CURRENT_DIRECTORY}/json/{table_name}.json") as json_file:
-            table = json.load(json_file)
-    except EnvironmentError:
-        print(f"Failed to open {CURRENT_DIRECTORY}/json/{table_name}.json")
-        return
+    with open(f"{CURRENT_DIRECTORY}/json/{table_name}.json") as json_file:
+        table = json.load(json_file)
 
     query = "CREATE TABLE unannotated_posts\n(\n"
     for field, values in table["COLUMNS"].items():
