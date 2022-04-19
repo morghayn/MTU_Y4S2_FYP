@@ -1,9 +1,9 @@
 # Module Imports
 from ctypes.wintypes import HACCEL
+from dotenv import load_dotenv
+import create_query
 import mariadb
 import sys
-from dotenv import load_dotenv
-from create_table_json import compile_query
 import json
 import os
 
@@ -94,7 +94,7 @@ class Connection:
 
     def create_table(self, table_name, primary_key_name="id"):
         try:
-            self.cursor.execute(compile_query(table_name, primary_key_name))
+            self.cursor.execute(compile(table_name, primary_key_name))
             self.cursor.execute(
                 f"ALTER TABLE {table_name} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
             )

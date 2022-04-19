@@ -122,11 +122,12 @@ def create_save_folder_if_not_exist():
 
 
 def export(table_name):
+    create_save_folder_if_not_exist()
     if table_name == "unannotated_posts":
         print(f"Exporting {table_name}")
         unannotated_posts()
 
-def compile_query(table_name, primary_key_name):
+def compile(table_name, primary_key_name):
     try:
         with open(f"{CURRENT_DIRECTORY}/json/{table_name}.json") as json_file:
             table = json.load(json_file)
