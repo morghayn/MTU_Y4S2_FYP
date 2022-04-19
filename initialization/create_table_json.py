@@ -80,7 +80,8 @@ def unannotated_posts():
             # Less Important Meta Data
             #
             "edited": {
-                "datatype": "BOOLEAN",
+                "datatype": "DOUBLE",
+                "size": "20,5",
                 "constraints": "",
             },
             "stickied": {
