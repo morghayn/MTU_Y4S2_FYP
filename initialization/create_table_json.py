@@ -125,3 +125,23 @@ def export(table_name):
     if table_name == "unannotated_posts":
         print(f"Exporting {table_name}")
         unannotated_posts()
+
+def compile_query(table_name, primary_key_name):
+    try:
+        with open(f"{CURRENT_DIRECTORY}/json/{table_name}.json") as json_file:
+            table = json.load(json_file)
+    except EnvironmentError:
+        print(f"Failed to open {CURRENT_DIRECTORY}/json/{table_name}.json")
+        return
+
+    query = "CREATE TABLE unannotated_posts\n(\n"
+    for field, values in table["COLUMNS"].items():
+        size = "" if "size" not in values else f"({str(values['size'])})"
+        datatype = values["datatype"]
+        constraints = values["constraints"]
+        #
+        query += f"\t{field} {datatype}{size}{constraints},\n"
+
+    keys = table["PRIMARY_KEYS"]
+    query += f"\tCONSTRAINT {primary_key_name} PRIMARY KEY ({','.join([str(key) for key in keys])})\n)\n"
+    return query

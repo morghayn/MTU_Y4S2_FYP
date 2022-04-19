@@ -3,6 +3,7 @@ from ctypes.wintypes import HACCEL
 import mariadb
 import sys
 from dotenv import load_dotenv
+from create_table_json import compile_query
 import json
 import os
 
@@ -18,28 +19,6 @@ NAME = os.getenv("DATABASE_NAME")
 TABLES = ["unannotated_posts"]
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
-
-
-def compile_query(table_name, primary_key_name):
-    try:
-        with open(f"{CURRENT_DIRECTORY}/json/{table_name}.json") as json_file:
-            table = json.load(json_file)
-    except EnvironmentError:
-        print(f"Failed to open {CURRENT_DIRECTORY}/json/{table_name}.json")
-        return
-
-    query = "CREATE TABLE unannotated_posts\n(\n"
-    for field, values in table["COLUMNS"].items():
-        size = "" if "size" not in values else f"({str(values['size'])})"
-        datatype = values["datatype"]
-        constraints = values["constraints"]
-        #
-        query += f"\t{field} {datatype}{size}{constraints},\n"
-
-    keys = table["PRIMARY_KEYS"]
-    query += f"\tCONSTRAINT {primary_key_name} PRIMARY KEY ({','.join([str(key) for key in keys])})\n)\n"
-    return query
-
 
 class Connection:
     def __init__(self) -> None:
@@ -114,11 +93,8 @@ class Connection:
             print(f"Could not drop table: {e}")
 
     def create_table(self, table_name, primary_key_name="id"):
-        query = compile_query(table_name, primary_key_name)
-        # print(query) # For debug purposes
-
         try:
-            self.cursor.execute(query)
+            self.cursor.execute(compile_query(table_name, primary_key_name))
             self.cursor.execute(
                 f"ALTER TABLE {table_name} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
             )
