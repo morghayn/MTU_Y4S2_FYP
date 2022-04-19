@@ -1,9 +1,8 @@
 import sys
 
-import create_table_json
+import create_query as create_query
 import database
-
-TABLES = ["unannotated_posts"]
+import retriever
 
 
 def main():
@@ -24,9 +23,7 @@ def main():
 
             if arg == "--create-json":
                 print("--init-insert: creating json")
-                create_table_json.create_save_folder_if_not_exist()
-                for table in TABLES:
-                    create_table_json.export(table)
+                create_query.export_all()
 
             elif arg == "--init-insert":
                 print("--init-insert: carrying out initial insertion")
@@ -34,12 +31,30 @@ def main():
 
             elif arg == "--drop-tables":
                 print("--delete-tables: deleting tables")
-                for table in TABLES:
+                for table in create_query.TABLES:
                     db.drop_table(table)
 
             elif arg == "--debug":
                 print("--debug: debugging implementation")
-                # DEBUG
+                create_query.export_all()
+
+                db.drop_table("unannotated_posts")
+                db.create_table("unannotated_posts")
+                reddit = retriever.Reddit()
+                
+                # retrieving posts from reddit, and columns list from db
+                posts = reddit.posts__from_subreddit__since__limited_to("Stocks", "month", 10)
+                columns = db.get_columns_list("unannotated_posts")
+
+                # inserting posts
+                for i, post in enumerate(posts):
+                    print(f"\n{i}.\nTickers: {post[8]}\nLink: https://reddit.com/r/stocks/comments/{post[4]}")
+                    res = db.insert_row("unannotated_posts", post)
+                    if res == False:
+                        print("I crashed")
+                        break
+
+            
 
 
 if __name__ == "__main__":

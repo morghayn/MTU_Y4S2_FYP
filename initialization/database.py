@@ -94,7 +94,7 @@ class Connection:
 
     def create_table(self, table_name, primary_key_name="id"):
         try:
-            self.cursor.execute(compile(table_name, primary_key_name))
+            self.cursor.execute(create_query.compile(table_name, primary_key_name))
             self.cursor.execute(
                 f"ALTER TABLE {table_name} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
             )
