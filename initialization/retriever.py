@@ -1,8 +1,10 @@
 import pandas as pd
+import prawcore
 import praw
 import os
 
 from dotenv import load_dotenv
+from psaw import PushshiftAPI
 from tqdm import tqdm
 
 load_dotenv()
@@ -39,52 +41,73 @@ class Reddit:
             user_agent=USER_AGENT,
         )
 
+        self.api = PushshiftAPI(self.reddit)
+
+    def praw_retrieval(self, subreddit_name, time_filter="week", limit=10):
+        """
+        Redundant due to implementation of psaw
+        """
+        return list(
+            self.reddit.subreddit(subreddit_name).top(
+                time_filter=time_filter, limit=limit
+            )
+        )
+
+    def psaw_retrieval(self, subreddit_name, after, limit):
+        return list(
+            self.api.search_submissions(
+                after=after,
+                subreddit=subreddit_name,
+                filter=["url", "author", "title"],
+                limit=limit,
+            )
+        )
+
     def posts__from_subreddit__since__limited_to(
-        self, subreddit_name, time_filter="week", limit=10
+        self, subreddit_name, after, limit=None
     ):
+        print("Commencing post retrieval")
         res = []
 
-        print("Commencing post retrieval")
         for submission in tqdm(
-            list(
-                self.reddit.subreddit(subreddit_name).top(
-                    time_filter=time_filter, limit=limit
-                )
-            ),
+            self.psaw_retrieval(subreddit_name, after, limit),
             desc="Processing",
         ):
             tickers = get_tickers(f"{submission.title}\n{submission.selftext}")
             if tickers:
-                res.append(
-                    [
-                        (
-                            "Unknown"
-                            if submission.author is None
-                            else submission.author.id
-                        ),
-                        (
-                            "Unknown"
-                            if submission.author is None
-                            else submission.author.name
-                        ),
-                        submission.subreddit.id,
-                        submission.subreddit.display_name,
-                        submission.id,
-                        submission.created_utc,
-                        submission.name,
-                        submission.title,
-                        ",".join([str(x) for x in tickers]),
-                        submission.selftext,
-                        submission.upvote_ratio,
-                        submission.score,
-                        submission.num_comments,
-                        submission.edited,
-                        submission.stickied,
-                        submission.locked,
-                        submission.over_18,
-                        submission.spoiler,
-                        submission.permalink,
-                    ]
-                )
+                try:
+                    res.append(
+                        [
+                            (
+                                "Unknown"
+                                if submission.author is None
+                                else submission.author.id
+                            ),
+                            (
+                                "Unknown"
+                                if submission.author is None
+                                else submission.author.name
+                            ),
+                            submission.subreddit.id,
+                            submission.subreddit.display_name,
+                            submission.id,
+                            submission.created_utc,
+                            submission.name,
+                            submission.title,
+                            ",".join([str(x) for x in tickers]),
+                            submission.selftext,
+                            submission.upvote_ratio,
+                            submission.score,
+                            submission.num_comments,
+                            submission.edited,
+                            submission.stickied,
+                            submission.locked,
+                            submission.over_18,
+                            submission.spoiler,
+                            submission.url,
+                        ]
+                    )
+                except prawcore.NotFound:
+                    print(f"Issue with {submission.url}")
 
         return res
