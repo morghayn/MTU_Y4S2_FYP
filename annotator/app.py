@@ -1,12 +1,15 @@
+import database
+
 from flask import Flask, send_from_directory, render_template, request
 
-
+db = database.Connection()
 app = Flask(__name__)
 
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    post = get_random_row()
+    return render_template("index.html", post=post)
 
 
 @app.route("/styles.css")
@@ -34,16 +37,9 @@ def process_evaluation():
 
 @app.route("/get-random-row")
 def get_random_row():
-    data = {
-        "id": "success-1",
-        "title": "success-2",
-        "ticker_list": "success-3",
-        "subreddit_display_name": "success-4",
-        "author_name": "success-5",
-        "url": '<a href="/#" target="blank_">success-6</a>',
-        "text": "success",
-    }
-    return data
+    post = db.select_random_unannotated_post()
+    post['text'] = post['text'].replace('\n', '<br>')
+    return post
 
 
 if __name__ == "__main__":

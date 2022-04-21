@@ -38,6 +38,7 @@ function refresh_elements() {
         .then(data => {
             id = id.setAttribute("value", data["id"]);
             Object.entries(elements).forEach(entry => {
+                console.log(entry);
                 const [key, value] = entry;
                 value.innerHTML = data[key];
             });
