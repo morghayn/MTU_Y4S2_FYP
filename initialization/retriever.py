@@ -42,17 +42,7 @@ class Reddit:
         )
 
         self.api = PushshiftAPI(self.reddit)
-
-    def praw_retrieval(self, subreddit_name, time_filter="week", limit=10):
-        """
-        Redundant due to implementation of psaw
-        """
-        return list(
-            self.reddit.subreddit(subreddit_name).top(
-                time_filter=time_filter, limit=limit
-            )
-        )
-
+    
     def psaw_retrieval(self, subreddit_name, after, limit):
         return list(
             self.api.search_submissions(
@@ -62,6 +52,35 @@ class Reddit:
                 limit=limit,
             )
         )
+
+    def get_data_list(self, submission, tickers):
+        res = []
+        try:
+            res = [
+                ("Unknown" if submission.author is None else submission.author.id),
+                ("Unknown" if submission.author is None else submission.author.name),
+                submission.subreddit.id,
+                submission.subreddit.display_name,
+                submission.id,
+                submission.created_utc,
+                submission.name,
+                submission.title,
+                ",".join([str(x) for x in tickers]),
+                submission.selftext,
+                submission.upvote_ratio,
+                submission.score,
+                submission.num_comments,
+                submission.edited,
+                submission.stickied,
+                submission.locked,
+                submission.over_18,
+                submission.spoiler,
+                submission.url,
+            ]
+        except prawcore.NotFound:
+            print(f"Issue with {submission.url}")
+        finally:
+            return res
 
     def posts__from_subreddit__since__limited_to(
         self, subreddit_name, after, limit=None
@@ -75,39 +94,8 @@ class Reddit:
         ):
             tickers = get_tickers(f"{submission.title}\n{submission.selftext}")
             if tickers:
-                try:
-                    res.append(
-                        [
-                            (
-                                "Unknown"
-                                if submission.author is None
-                                else submission.author.id
-                            ),
-                            (
-                                "Unknown"
-                                if submission.author is None
-                                else submission.author.name
-                            ),
-                            submission.subreddit.id,
-                            submission.subreddit.display_name,
-                            submission.id,
-                            submission.created_utc,
-                            submission.name,
-                            submission.title,
-                            ",".join([str(x) for x in tickers]),
-                            submission.selftext,
-                            submission.upvote_ratio,
-                            submission.score,
-                            submission.num_comments,
-                            submission.edited,
-                            submission.stickied,
-                            submission.locked,
-                            submission.over_18,
-                            submission.spoiler,
-                            submission.url,
-                        ]
-                    )
-                except prawcore.NotFound:
-                    print(f"Issue with {submission.url}")
+                data_list = self.get_data_list(submission, tickers)
+                if data_list:
+                    res.append(data_list)
 
         return res
