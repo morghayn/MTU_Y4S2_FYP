@@ -65,11 +65,13 @@ main {
     width: 20em;
 }
 
-.evaluator div {
+.evaluator .container {
     flex: 1;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    width: 20em;
 }
 
 .evaluator button {
