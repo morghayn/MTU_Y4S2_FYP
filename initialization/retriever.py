@@ -4,6 +4,7 @@ import praw
 import os
 
 from dotenv import load_dotenv
+from datetime import datetime
 from psaw import PushshiftAPI
 from tqdm import tqdm
 
@@ -42,9 +43,12 @@ class Reddit:
         )
 
         self.api = PushshiftAPI(self.reddit)
-    
+
     def psaw_retrieval(self, subreddit_name, after, limit):
-        return list(
+        date = datetime.fromtimestamp(after).strftime("%Y-%m-%d")
+        now = datetime.now().strftime("%H:%M:%S")
+        print(f"{now} | Retrieving {subreddit_name} posts since {date}, have patience")
+        res = list(
             self.api.search_submissions(
                 after=after,
                 subreddit=subreddit_name,
@@ -52,9 +56,14 @@ class Reddit:
                 limit=limit,
             )
         )
+        now = datetime.now().strftime("%H:%M:%S")
+        print(f"{now} | Retrieved {len(res)} posts, will begin processing")
+        return res
 
     def get_data_list(self, submission, tickers):
         res = []
+        url = f"https://www.reddit.com/r/{submission.subreddit.display_name}/comments/{submission.id}"
+
         try:
             res = [
                 ("Unknown" if submission.author is None else submission.author.id),
@@ -75,23 +84,26 @@ class Reddit:
                 submission.locked,
                 submission.over_18,
                 submission.spoiler,
-                submission.url,
+                url,
             ]
         except prawcore.NotFound:
-            print(f"Issue with {submission.url}")
+            print(f"Issue with {url}")
         finally:
             return res
 
     def posts__from_subreddit__since__limited_to(
         self, subreddit_name, after, limit=None
     ):
-        print("Commencing post retrieval")
         res = []
 
         for submission in tqdm(
             self.psaw_retrieval(subreddit_name, after, limit),
             desc="Processing",
         ):
+            # skipping posts that have been removed or deleted, saving processing time
+            if submission.selftext == "[removed]" or submission.selftext == "[deleted]":
+                continue
+
             tickers = get_tickers(f"{submission.title}\n{submission.selftext}")
             if tickers:
                 data_list = self.get_data_list(submission, tickers)
