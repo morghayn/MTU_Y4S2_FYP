@@ -108,7 +108,7 @@ class Reddit:
         # skipping posts that are empty, or are just an image, or have been removed, or delete
         if (
             not submission.selftext
-            and submission.selftext == "[removed]"
+            or submission.selftext == "[removed]"
             or submission.selftext == "[deleted]"
         ):
             return
