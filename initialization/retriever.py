@@ -114,18 +114,20 @@ class Reddit:
         tickers = get_tickers(f"{submission.title}\n{submission.selftext}")
         if tickers:
             res = self.pack_submission(submission, tickers)
+
+            # if no errors occurred...
             if res:
-                self.res.append(res)
+                self.posts.append(res)
 
     def posts__from_subreddit(
         self, subreddit_name, after, before=int(datetime.now().timestamp()), limit=None
     ):
         manager = Manager()
-        self.res = manager.list()
-        data = self.psaw_retrieval(subreddit_name, after, before, limit)
+        self.posts = manager.list()
+        posts = self.psaw_retrieval(subreddit_name, after, before, limit)
 
         cpu_count = multiprocessing.cpu_count()
-        process_map(self.process_submission, data, max_workers=cpu_count, chunksize=1)
+        process_map(self.process_submission, posts, max_workers=cpu_count, chunksize=1)
 
-        res = list(self.res)
-        return res
+        posts = list(self.posts)
+        return posts
