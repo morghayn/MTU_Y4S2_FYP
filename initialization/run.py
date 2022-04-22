@@ -38,6 +38,8 @@ def main():
                     posts = reddit.posts__from_subreddit(subreddit, after)
 
                     # inserting posts
+                    print(f"\nFinished processing records for r/{subreddit}.")
+                    print("Will now insert processed records.")
                     for i, post in enumerate(posts):
                         db.insert_row("unannotated_posts", post)
 
@@ -59,15 +61,17 @@ def main():
             elif arg == "--debug":
                 print("\n--debug: debugging insertion")
                 reddit = retriever.Reddit()
-                
-                # retrieving posts from reddit, and columns list from db
-                after = int(datetime(2022, 4, 22).timestamp())  # since start of today
-                posts = reddit.posts__from_subreddit("stocks", after)
 
-                # inserting posts
-                for i, post in enumerate(posts):
-                    print(f"\n{i}.\nTickers: {post[8]}\nLink: {post[18]}")
-                    db.insert_row("unannotated_posts", post)
+                # retrieving posts from reddit, and columns list from db
+                after = int(datetime(2022, 4, 20).timestamp())  # past 6 months
+                for subreddit in retriever.SUBREDDITS:
+                    posts = reddit.posts__from_subreddit(subreddit, after)
+
+                    # inserting posts
+                    print(f"\nFinished processing records for r/{subreddit}.")
+                    print("Will now insert processed records.")
+                    for i, post in enumerate(posts):
+                        db.insert_row("unannotated_posts", post)
 
 
 if __name__ == "__main__":
