@@ -20,6 +20,10 @@ lite-update: wsl-host
 	${PYENV_PATH} \
 	initialization/run.py --create-json --create-tables
 
+init-insert: wsl-host
+	${PYENV_PATH} \
+	initialization/run.py --init-insert
+
 patch: wsl-host
 	${PYENV_PATH} \
 	initialization/run.py --patch
