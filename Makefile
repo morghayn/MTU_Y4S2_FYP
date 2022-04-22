@@ -7,13 +7,24 @@ debug: wsl-host
 	${PYENV_PATH} \
 	initialization/run.py --debug
 
+# misc.
 wsl-host:
 	./wsl_host.sh
 
-install: wsl-host
+# initialization application
+fresh-install: wsl-host
 	${PYENV_PATH} \
-	initialization/run.py --drop-tables --create-json --init-insert
+	initialization/run.py --create-json --drop-tables --create-tables
 
+lite-update: wsl-host
+	${PYENV_PATH} \
+	initialization/run.py --create-json --create-tables
+
+patch: wsl-host
+	${PYENV_PATH} \
+	initialization/run.py --patch
+
+# containers
 update: clean build start
 clean:
 	docker-compose stop
@@ -22,3 +33,8 @@ build:
 	docker-compose build
 start:
 	docker-compose up
+
+# local app
+start-annotator:
+	${PYENV_PATH} \
+	annotator/app.py
