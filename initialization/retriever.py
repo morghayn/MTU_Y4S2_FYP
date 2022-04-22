@@ -1,12 +1,14 @@
+import multiprocessing
 import pandas as pd
 import prawcore
 import praw
 import os
 
+from tqdm.contrib.concurrent import process_map
+from multiprocessing import Manager
 from dotenv import load_dotenv
 from datetime import datetime
 from psaw import PushshiftAPI
-from tqdm import tqdm
 
 load_dotenv()
 
@@ -17,9 +19,9 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 USER_AGENT = os.getenv("USER_AGENT")
 
 SUBREDDITS = [
-    "stocks", # 34 matches out of 210 posts
-    "stockmarket", # 11 matches out of 98 posts
-    "wallstreetbets" # 124 matches out of 1098 posts
+    "stocks",  # 34 matches out of 210 posts
+    "stockmarket",  # 11 matches out of 98 posts
+    "wallstreetbets",  # 124 matches out of 1098 posts
 ]
 
 df = pd.read_csv("s&p-500.csv")
@@ -93,31 +95,36 @@ class Reddit:
                 url,
             ]
         except prawcore.NotFound:
-            print(f"Issue with {url}")
+            # print(f"Issue with {url}")
+            pass # do nothing
         finally:
             return res
+
+    def process_submission(self, submission):
+        res = []
+        # skipping posts that are empty, or are just an image, or have been removed, or delete
+        if (
+            not submission.selftext
+            and submission.selftext == "[removed]"
+            or submission.selftext == "[deleted]"
+        ):
+            return
+
+        tickers = get_tickers(f"{submission.title}\n{submission.selftext}")
+        if tickers:
+            res = self.get_data_list(submission, tickers)
+            if res:
+                self.res.append(res)
 
     def posts__from_subreddit__since__limited_to(
         self, subreddit_name, after, limit=None
     ):
-        res = []
+        manager = Manager()
+        self.res = manager.list()
+        data = self.psaw_retrieval(subreddit_name, after, limit)
 
-        for submission in tqdm(
-            self.psaw_retrieval(subreddit_name, after, limit),
-            desc="Processing",
-        ):
-            # skipping posts that are empty, or are just an image, or have been removed, or delete
-            if (
-                not submission.selftext
-                and submission.selftext == "[removed]"
-                or submission.selftext == "[deleted]"
-            ):
-                continue
+        cpu_count = multiprocessing.cpu_count()
+        process_map(self.process_submission, data, max_workers=cpu_count, chunksize=1)
 
-            tickers = get_tickers(f"{submission.title}\n{submission.selftext}")
-            if tickers:
-                data_list = self.get_data_list(submission, tickers)
-                if data_list:
-                    res.append(data_list)
-
-        return res
+        res = list(self.res)
+        return []#res
