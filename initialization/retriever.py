@@ -68,7 +68,7 @@ class Reddit:
             )
         )
         now = datetime.now().strftime("%H:%M:%S")
-        print(f"{now} | Retrieved {len(res)} posts, will begin processing")
+        print(f"{now} | Retrieved {len(res)} posts, will begin processing\n")
         return res
 
     def get_data_list(self, submission, tickers):

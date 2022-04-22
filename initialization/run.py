@@ -33,13 +33,14 @@ def main():
                 reddit = retriever.Reddit()
 
                 # retrieving posts from reddit, and columns list from db
-                after = int(datetime(2021, 9, 20).timestamp())  # past 6 months
+                # 1st Batch after: 2022-2-22 before: now
+                after = int(datetime(2022, 2, 22).timestamp())  # 2 month batch
                 for subreddit in retriever.SUBREDDITS:
                     posts = reddit.posts__from_subreddit(subreddit, after)
 
                     # inserting posts
                     print(f"\nFinished processing records for r/{subreddit}.")
-                    print("Will now insert processed records.")
+                    print(f"Will now insert {len(posts)} processed records.")
                     for i, post in enumerate(posts):
                         db.insert_row("unannotated_posts", post)
 
@@ -59,19 +60,7 @@ def main():
                 print("No patch implemented")
 
             elif arg == "--debug":
-                print("\n--debug: debugging insertion")
-                reddit = retriever.Reddit()
-
-                # retrieving posts from reddit, and columns list from db
-                after = int(datetime(2022, 4, 20).timestamp())  # past 6 months
-                for subreddit in retriever.SUBREDDITS:
-                    posts = reddit.posts__from_subreddit(subreddit, after)
-
-                    # inserting posts
-                    print(f"\nFinished processing records for r/{subreddit}.")
-                    print("Will now insert processed records.")
-                    for i, post in enumerate(posts):
-                        db.insert_row("unannotated_posts", post)
+                pass
 
 
 if __name__ == "__main__":
