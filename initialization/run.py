@@ -56,13 +56,9 @@ def main():
                 print("No patch implemented")
 
             elif arg == "--debug":
-                print("\n--debug: debugging implementation")
-                create_query.export_all()
-
-                db.drop_table("unannotated_posts")
-                db.create_table("unannotated_posts")
+                print("\n--debug: debugging insertion")
                 reddit = retriever.Reddit()
-
+                
                 # retrieving posts from reddit, and columns list from db
                 after = int(datetime(2022, 4, 22).timestamp())  # since start of today
                 posts = reddit.posts__from_subreddit("stocks", after)
