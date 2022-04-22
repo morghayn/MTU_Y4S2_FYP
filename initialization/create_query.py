@@ -263,6 +263,11 @@ ANNOATED_POSTS = {
             "datatype": "TINYINT",
             "constraints": "",
         },
+        "insertion_timestamp": {
+            "datatype": "DOUBLE",
+            "size": "20,5",
+            "constraints": "",
+        },
     },
     "PRIMARY_KEYS": ["id"],
 }
