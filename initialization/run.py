@@ -49,7 +49,8 @@ def main():
             elif arg == "--drop-tables":
                 print("\n--delete-tables: deleting tables")
                 for table in create_query.TABLES:
-                    db.drop_table(table)
+                    # db.drop_table(table)
+                    pass
 
             elif arg == "--patch":
                 print("\n--patch: apply a patch")
