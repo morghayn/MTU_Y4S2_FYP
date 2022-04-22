@@ -259,10 +259,10 @@ ANNOATED_POSTS = {
         #
         # Annoatation
         #
-        # "sentiment": {
-        #     "datatype:": "TINYINT",
-        #     "constraints": "",
-        # },
+        "sentiment": {
+            "datatype": "TINYINT",
+            "constraints": "",
+        },
     },
     "PRIMARY_KEYS": ["id"],
 }
