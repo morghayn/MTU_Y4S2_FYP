@@ -52,7 +52,7 @@ class Connection:
             print(f"Failed to open: {CURRENT_DIRECTORY}/json/{table_name}.json")
             return []
 
-    def insert_row(self, table_name, data):
+    def insert_row(self, table_name, data, notify=False):
         columns = self.tables[table_name]
         try:
             self.cursor.execute(
@@ -61,7 +61,8 @@ class Connection:
                 tuple([data[i] for i in range(0, len(columns))]),
             )
             self.conn.commit()
-            print("Sucessfully inserted row.")
+            if notify:
+                print("Sucessfully inserted row.")
         except mariadb.Error as e:
             print(f"Could not insert row: {e}")
             # print(tuple([data[i] for i in range(0, len(columns))])) # For debug purposes
