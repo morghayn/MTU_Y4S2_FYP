@@ -100,8 +100,12 @@ class Reddit:
             self.psaw_retrieval(subreddit_name, after, limit),
             desc="Processing",
         ):
-            # skipping posts that have been removed or deleted, saving processing time
-            if submission.selftext == "[removed]" or submission.selftext == "[deleted]":
+            # skipping posts that are empty, or are just an image, or have been removed, or delete
+            if (
+                not submission.selftext
+                and submission.selftext == "[removed]"
+                or submission.selftext == "[deleted]"
+            ):
                 continue
 
             tickers = get_tickers(f"{submission.title}\n{submission.selftext}")
