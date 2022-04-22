@@ -13,7 +13,7 @@ def main():
     if arg_length < 2:
         print(
             "\nflags:" "\n\t--create-json: creates table json files",
-            "\n\t--init-insert: executes initial data insertion",
+            "\n\t--insert: executes data insertion",
             "\n\t--create-tables: creating tables"
             "\n\t--delete-tables: deletes all tables in database",
             "\n\t--patch: apply a patch",
@@ -25,11 +25,11 @@ def main():
             arg = sys.argv[i]
 
             if arg == "--create-json":
-                print("\n--init-insert: creating json")
+                print("\n--insert: creating json")
                 create_query.export_all()
 
-            elif arg == "--init-insert":
-                print("\n--init-insert: carrying out initial insertion")
+            elif arg == "--insert":
+                print("\n--insert: carrying out initial insertion")
                 reddit = retriever.Reddit()
 
                 # retrieving posts from reddit, and columns list from db
