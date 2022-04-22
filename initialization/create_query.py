@@ -37,7 +37,7 @@ def compile(table_name, primary_key_name):
     with open(f"{CURRENT_DIRECTORY}/json/{table_name}.json") as json_file:
         table = json.load(json_file)
 
-    query = "CREATE TABLE unannotated_posts\n(\n"
+    query = f"CREATE TABLE {table_name}\n(\n"
     for field, values in table["COLUMNS"].items():
         size = "" if "size" not in values else f"({str(values['size'])})"
         datatype = values["datatype"]
@@ -259,7 +259,10 @@ ANNOATED_POSTS = {
         #
         # Annoatation
         #
-        "sentiment": {"datatype:": "TINYINT", "constraints": ""},
+        # "sentiment": {
+        #     "datatype:": "TINYINT",
+        #     "constraints": "",
+        # },
     },
     "PRIMARY_KEYS": ["id"],
 }
