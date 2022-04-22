@@ -16,7 +16,7 @@ HOST = os.getenv("DATABASE_HOST")
 PORT = int(os.getenv("DATABASE_PORT"))
 NAME = os.getenv("DATABASE_NAME")
 
-TABLES = ["unannotated_posts"]
+TABLES = ["unannotated_posts", "annotated_posts"]
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
