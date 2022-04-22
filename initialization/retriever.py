@@ -55,7 +55,9 @@ class Reddit:
     def psaw_retrieval(self, subreddit_name, after, before, limit):
         date = datetime.fromtimestamp(after).strftime("%Y-%m-%d")
         now = datetime.now().strftime("%H:%M:%S")
-        print(f"\n{now} | Retrieving {subreddit_name} posts since {date}, have patience")
+        print(
+            f"\n{now} | Retrieving posts from r/{subreddit_name} since {date}, have patience"
+        )
         res = list(
             self.api.search_submissions(
                 after=after,
