@@ -52,13 +52,14 @@ class Reddit:
 
         self.api = PushshiftAPI(self.reddit)
 
-    def psaw_retrieval(self, subreddit_name, after, limit):
+    def psaw_retrieval(self, subreddit_name, after, before, limit):
         date = datetime.fromtimestamp(after).strftime("%Y-%m-%d")
         now = datetime.now().strftime("%H:%M:%S")
-        print(f"{now} | Retrieving {subreddit_name} posts since {date}, have patience")
+        print(f"\n{now} | Retrieving {subreddit_name} posts since {date}, have patience")
         res = list(
             self.api.search_submissions(
                 after=after,
+                before=before,
                 subreddit=subreddit_name,
                 filter=["url", "author", "title"],
                 limit=limit,
@@ -96,7 +97,7 @@ class Reddit:
             ]
         except prawcore.NotFound:
             # print(f"Issue with {url}")
-            pass # do nothing
+            pass  # do nothing
         finally:
             return res
 
@@ -116,15 +117,15 @@ class Reddit:
             if res:
                 self.res.append(res)
 
-    def posts__from_subreddit__since__limited_to(
-        self, subreddit_name, after, limit=None
+    def posts__from_subreddit(
+        self, subreddit_name, after, before=int(datetime.now().timestamp()), limit=None
     ):
         manager = Manager()
         self.res = manager.list()
-        data = self.psaw_retrieval(subreddit_name, after, limit)
+        data = self.psaw_retrieval(subreddit_name, after, before, limit)
 
         cpu_count = multiprocessing.cpu_count()
         process_map(self.process_submission, data, max_workers=cpu_count, chunksize=1)
 
         res = list(self.res)
-        return []#res
+        return res
