@@ -71,7 +71,7 @@ class Reddit:
         print(f"{now} | Retrieved {len(res)} posts, will begin processing\n")
         return res
 
-    def get_data_list(self, submission, tickers):
+    def pack_submission(self, submission, tickers):
         res = []
         url = f"https://www.reddit.com/r/{submission.subreddit.display_name}/comments/{submission.id}"
 
@@ -98,13 +98,11 @@ class Reddit:
                 url,
             ]
         except prawcore.NotFound:
-            # print(f"Issue with {url}")
-            pass  # do nothing
+            pass
         finally:
             return res
 
     def process_submission(self, submission):
-        res = []
         # skipping posts that are empty, or are just an image, or have been removed, or delete
         if (
             not submission.selftext
@@ -115,7 +113,7 @@ class Reddit:
 
         tickers = get_tickers(f"{submission.title}\n{submission.selftext}")
         if tickers:
-            res = self.get_data_list(submission, tickers)
+            res = self.pack_submission(submission, tickers)
             if res:
                 self.res.append(res)
 
