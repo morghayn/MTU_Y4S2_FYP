@@ -3,7 +3,7 @@ import os
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 OUTPUT_DIR = "json"
-TABLES = ["unannotated_posts"]
+TABLES = ["unannotated_posts", "annotated_posts"]
 
 
 def create_save_folder_if_not_exist():
@@ -16,8 +16,12 @@ def get_dictionary(table):
     Switch statement to return corresponding dictionary to table_name string passed
     """
     res = {}
+
     if table == "unannotated_posts":
         res = UNANNOATED_POSTS
+    elif table == "annotated_posts":
+        res = ANNOATED_POSTS
+
     return res
 
 
@@ -25,9 +29,7 @@ def export_all():
     create_save_folder_if_not_exist()
     for table in TABLES:
         print(f"Exporting {table}")
-        with open(
-            f"{CURRENT_DIRECTORY}/{OUTPUT_DIR}/{table}.json", "w"
-        ) as write_file:
+        with open(f"{CURRENT_DIRECTORY}/{OUTPUT_DIR}/{table}.json", "w") as write_file:
             json.dump(get_dictionary(table), write_file, indent=4)
 
 
@@ -149,6 +151,115 @@ UNANNOATED_POSTS = {
             "size": 700,
             "constraints": "",
         },
+    },
+    "PRIMARY_KEYS": ["id"],
+}
+
+ANNOATED_POSTS = {
+    "COLUMNS": {
+        #
+        # Identifiers
+        #
+        "author_id": {
+            "datatype": "VARCHAR",
+            "size": 10,
+            "constraints": "",
+        },
+        "author_name": {
+            "datatype": "VARCHAR",
+            "size": 20,
+            "constraints": "",
+        },
+        "subreddit_id": {
+            "datatype": "VARCHAR",
+            "size": 10,
+            "constraints": "",
+        },
+        "subreddit_display_name": {
+            "datatype": "VARCHAR",
+            "size": 20,
+            "constraints": "",
+        },
+        "id": {
+            "datatype": "VARCHAR",
+            "size": 10,
+            "constraints": "",
+        },
+        #
+        # Important Meta Data
+        #
+        "creation_time_utc": {
+            "datatype": "DOUBLE",
+            "size": "20,5",
+            "constraints": "",
+        },
+        "name": {
+            "datatype": "VARCHAR",
+            "size": 10,
+            "constraints": "",
+        },
+        "title": {
+            "datatype": "VARCHAR",
+            "size": 300,
+            "constraints": "",
+        },
+        "ticker_list": {
+            "datatype": "TEXT",
+            "constraints": "",
+        },
+        "text": {
+            "datatype": "TEXT",
+            "constraints": "",
+        },
+        "upvote_ratio": {
+            "datatype": "DOUBLE",
+            "size": "10,5",
+            "constraints": "",
+        },
+        "score": {
+            "datatype": "INT",
+            "constraints": "",
+        },
+        "num_of_comments": {
+            "datatype": "INT",
+            "constraints": "",
+        },
+        #
+        # Less Important Meta Data
+        #
+        "edited": {
+            "datatype": "DOUBLE",
+            "size": "20,5",
+            "constraints": "",
+        },
+        "stickied": {
+            "datatype": "BOOLEAN",
+            "constraints": "",
+        },
+        "locked": {
+            "datatype": "BOOLEAN",
+            "constraints": "",
+        },
+        "over_18": {
+            "datatype": "BOOLEAN",
+            "constraints": "",
+        },
+        "spoiler": {
+            "datatype": "BOOLEAN",
+            "constraints": "",
+        },
+        #
+        # Quick Access
+        #
+        "url": {
+            "datatype": "VARCHAR",
+            "size": 700,
+            "constraints": "",
+        },
+        #
+        # Annoatation
+        #
+        "sentiment": {"datatype:": "TINYINT", "constraints": ""},
     },
     "PRIMARY_KEYS": ["id"],
 }
