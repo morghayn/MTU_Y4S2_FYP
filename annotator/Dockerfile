@@ -5,7 +5,7 @@ FROM python:latest
 LABEL maintainer="morgan.nolan@hotmail.com"
 
 # Copying folder contents
-COPY ["/annotator", "/annotator/"]
+COPY ["/annotator", ".env", "/annotator/"]
 
 # Setting our working directory
 WORKDIR /annotator
