@@ -42,3 +42,8 @@ start:
 start-annotator:
 	${PYENV_PATH} \
 	annotator/app.py
+
+# gpt3
+gpt3:
+	${PYENV_PATH} \
+	gpt3-annotation/gpt3-annotation.py
