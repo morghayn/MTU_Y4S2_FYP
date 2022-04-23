@@ -53,10 +53,11 @@ class Reddit:
         self.api = PushshiftAPI(self.reddit)
 
     def psaw_retrieval(self, subreddit_name, after, before, limit):
-        date = datetime.fromtimestamp(after).strftime("%Y-%m-%d")
+        after_str = datetime.fromtimestamp(after).strftime("%Y-%m-%d")
+        before_str = datetime.fromtimestamp(before).strftime("%Y-%m-%d")
         now = datetime.now().strftime("%H:%M:%S")
         print(
-            f"\n{now} | Retrieving posts from r/{subreddit_name} since {date}, have patience"
+            f"\n{now} | Retrieving posts from r/{subreddit_name} between {after_str} to {before_str}, have patience"
         )
         res = list(
             self.api.search_submissions(
