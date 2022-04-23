@@ -16,7 +16,7 @@ HOST = os.getenv("DATABASE_HOST")
 PORT = int(os.getenv("DATABASE_PORT"))
 NAME = os.getenv("DATABASE_NAME")
 
-TABLES = ["unannotated_posts", "annotated_posts"]
+TABLES = ["unannotated_posts", "annotators", "annotations"]
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
@@ -64,7 +64,8 @@ class Connection:
             if notify:
                 print("Sucessfully inserted row.")
         except mariadb.Error as e:
-            print(f"Could not insert row: {e}")
+            # print(f"Could not insert row: {e}")
+            pass
             # print(tuple([data[i] for i in range(0, len(columns))])) # For debug purposes
 
     def retrieve_all(self, table_name):
