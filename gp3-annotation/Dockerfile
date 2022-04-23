@@ -5,13 +5,13 @@ FROM python:latest
 LABEL maintainer="morgan.nolan@hotmail.com"
 
 # Copying folder contents
-COPY ["/retriever", ".env", "/retriever/"]
+COPY ["/gp3-annotation", ".env", "/gp3-annotation/"]
 
 # Setting our working directory
-WORKDIR /retriever
+WORKDIR /gp3-annotation
 
 # Installing required Python libraries
 RUN pip install -r requirements.txt
 
 # Running server.py when container is started
-CMD ["python", "-u", "retriever.py"]
+CMD ["python", "-u", "gp3-annotation.py"]

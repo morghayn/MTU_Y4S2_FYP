@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-  retriever:
-    container_name: retriever
+  gp3-annotation:
+    container_name: gp3-annotation
     build:
       context: .
-      dockerfile: retriever/Dockerfile
+      dockerfile: gp3-annotation/Dockerfile
   annotator:
     container_name: annotator
     build:
