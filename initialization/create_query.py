@@ -268,6 +268,11 @@ ANNOATED_POSTS = {
             "size": "20,5",
             "constraints": "",
         },
+        "annotator_id": {
+            "datatype": "VARCHAR",
+            "size": 255,
+            "constraints": "",
+        },
     },
     "PRIMARY_KEYS": ["id"],
 }
