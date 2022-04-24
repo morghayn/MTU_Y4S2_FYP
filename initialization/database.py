@@ -16,7 +16,7 @@ HOST = os.getenv("DATABASE_HOST")
 PORT = int(os.getenv("DATABASE_PORT"))
 NAME = os.getenv("DATABASE_NAME")
 
-TABLES = ["unannotated_posts", "annotators", "annotations"]
+TABLES = ["unannotated_posts", "annotator", "annotations"]
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
@@ -97,9 +97,6 @@ class Connection:
     def create_table(self, table_name, primary_key_name="id"):
         try:
             self.cursor.execute(create_query.compile(table_name, primary_key_name))
-            self.cursor.execute(
-                f"ALTER TABLE {table_name} CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_bin"
-            )
             print(f"Successfully created table '{table_name}'.")
         except mariadb.Error as e:
             print(f"Could not create table: {e}")

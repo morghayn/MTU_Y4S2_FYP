@@ -3,7 +3,7 @@ import os
 
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 OUTPUT_DIR = "json"
-TABLES = ["unannotated_posts", "annotators", "annotations"]
+TABLES = ["unannotated_posts", "annotator", "annotations"]
 
 
 def create_save_folder_if_not_exist():
@@ -19,8 +19,8 @@ def get_dictionary(table):
 
     if table == "unannotated_posts":
         res = UNANNOATED_POSTS
-    elif table == "annotators":
-        res = ANNOTATORS
+    elif table == "annotator":
+        res = ANNOTATOR
     elif table == "annotations":
         res = ANNOTATIONS
 
@@ -44,11 +44,35 @@ def compile(table_name, primary_key_name):
         size = "" if "size" not in values else f"({str(values['size'])})"
         datatype = values["datatype"]
         constraints = values["constraints"]
+        if constraints:
+            constraints = " " + constraints
         #
         query += f"\t{field} {datatype}{size}{constraints},\n"
 
+    # Primary key
     keys = table["PRIMARY_KEYS"]
-    query += f"\tCONSTRAINT {primary_key_name} PRIMARY KEY ({','.join([str(key) for key in keys])})\n)\n"
+    query += f"\tCONSTRAINT {primary_key_name} PRIMARY KEY ({','.join([str(key) for key in keys])})"
+
+    # If foreign keys
+    if "FOREIGN_KEYS" in table:
+        query += ",\n"
+        foreign_keys = table["FOREIGN_KEYS"]
+        for i, (key, value) in enumerate(foreign_keys.items()):
+            query += f"\tCONSTRAINT FOREIGN KEY(`{key}`)"
+            query += f"\n\t\tREFERENCES `{value['TABLE']}` (`{value['FIELD']}`)"
+            for option in value['OPTIONS']:
+                query += f"\n\t\t{option}"
+            query += "\n" if i == (len(foreign_keys) - 1) else ",\n"
+        
+    else:
+        query += "\n"
+
+    # Closing
+    query += ")\n"
+    query += "CHARACTER SET utf8mb4\n"
+    query += "COLLATE utf8mb4_bin\n"
+
+    # print(f"{table_name}\n{query}\n\n")
     return query
 
 
@@ -157,19 +181,13 @@ UNANNOATED_POSTS = {
     "PRIMARY_KEYS": ["id"],
 }
 
-ANNOTATORS = {
+ANNOTATOR = {
     "COLUMNS": {
         "id": {
-            "datatype": "VARCHAR",
-            "size": 255,
-            "constraints": "",
+            "datatype": "INT",
+            "constraints": "NOT NULL AUTO_INCREMENT",
         },
-        "name": {
-            "datatype": "VARCHAR",
-            "size": 255,
-            "constraints": "",
-        },
-        "email": {
+        "username": {
             "datatype": "VARCHAR",
             "size": 255,
             "constraints": "",
@@ -186,9 +204,8 @@ ANNOTATIONS = {
             "constraints": "",
         },
         "annotator_id": {
-            "datatype": "VARCHAR",
-            "size": 255,
-            "constraints": "",
+            "datatype": "INT",
+            "constraints": "NOT NULL",
         },
         "sentiment": {
             "datatype": "TINYINT",
@@ -201,4 +218,16 @@ ANNOTATIONS = {
         },
     },
     "PRIMARY_KEYS": ["post_id", "annotator_id"],
+    "FOREIGN_KEYS": {
+        "post_id": {
+            "TABLE": "unannotated_posts",
+            "FIELD": "id",
+            "OPTIONS": ["ON DELETE CASCADE", "ON UPDATE CASCADE"],
+        },
+        "annotator_id": {
+            "TABLE": "annotator",
+            "FIELD": "id",
+            "OPTIONS": ["ON DELETE CASCADE", "ON UPDATE CASCADE"],
+        },
+    },
 }
