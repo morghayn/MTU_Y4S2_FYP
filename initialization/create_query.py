@@ -198,6 +198,10 @@ ANNOTATOR = {
 
 ANNOTATIONS = {
     "COLUMNS": {
+        "id": {
+            "datatype": "INT",
+            "constraints": "AUTO_INCREMENT",
+        },
         "post_id": {
             "datatype": "VARCHAR",
             "size": 10,
@@ -205,7 +209,7 @@ ANNOTATIONS = {
         },
         "annotator_id": {
             "datatype": "INT",
-            "constraints": "NOT NULL",
+            "constraints": "",
         },
         "sentiment": {
             "datatype": "TINYINT",
@@ -217,7 +221,7 @@ ANNOTATIONS = {
             "constraints": "",
         },
     },
-    "PRIMARY_KEYS": ["post_id", "annotator_id"],
+    "PRIMARY_KEYS": ["id"],
     "FOREIGN_KEYS": {
         "post_id": {
             "TABLE": "unannotated_posts",
