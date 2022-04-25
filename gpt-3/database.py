@@ -35,12 +35,6 @@ class Connection:
 
         self.init_tables()
 
-    def set_temp_cursor(self):
-        self.cursor = self.conn.cursor()
-    
-    def set_temp_dict_cursor(self):
-        self.dict_cursor = self.conn.cursor(dictionary=True)
-
     def init_tables(self):
         self.tables = {}
         for table_name in TABLES:
@@ -58,7 +52,7 @@ class Connection:
         res = {}
 
         try:
-            self.set_temp_dict_cursor()
+            self.dict_cursor = self.conn.cursor(dictionary=True)
             statement = f"""
             SELECT 
                 *
@@ -102,7 +96,7 @@ class Connection:
         res = {}
 
         try:
-            self.set_temp_dict_cursor()
+            self.dict_cursor = self.conn.cursor(dictionary=True)
             statement = f"""
             SELECT 
                 *
@@ -128,7 +122,7 @@ class Connection:
         res = {}
 
         try:
-            self.set_temp_dict_cursor()
+            self.dict_cursor = self.conn.cursor(dictionary=True)
             statement = "SELECT * FROM unannotated_posts"
             self.dict_cursor.execute(statement)
             res = self.dict_cursor.fetchall()
@@ -144,7 +138,7 @@ class Connection:
         res = {}
 
         try:
-            self.set_temp_dict_cursor()
+            self.dict_cursor = self.conn.cursor(dictionary=True)
             statement = f"SELECT * FROM unannotated_posts WHERE score > {x}"
             self.dict_cursor.execute(statement)
             res = self.dict_cursor.fetchall()
@@ -160,11 +154,11 @@ class Connection:
         res = None
 
         try:
-            self.set_temp_cursor()
+            self.cursor = self.conn.cursor()
             statement = f'SELECT id FROM annotator WHERE username = "{username}"'
             self.cursor.execute(statement)
             res = self.cursor.fetchone()[0]
-            self.set_temp_cursor()
+            self.conn.cursor().close()
 
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
@@ -179,7 +173,7 @@ class Connection:
             columns.remove("id")
 
         try:
-            self.set_temp_cursor()
+            self.cursor = self.conn.cursor()
             self.cursor.execute(
                 f"INSERT INTO {table_name} ({','.join([str(x) for x in columns])})"
                 + f" VALUES ({','.join(['?' for x in columns])})",
@@ -189,6 +183,7 @@ class Connection:
             self.cursor.close()
             if notify:
                 print("Sucessfully inserted row.")
+
         except mariadb.Error as e:
             print(f"Could not insert row: {e}")
             pass
