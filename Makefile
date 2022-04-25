@@ -43,7 +43,7 @@ start-annotator:
 	${PYENV_PATH} \
 	annotator/app.py
 
-# gpt3
-gpt3:
+# gpt-3
+gpt-3:
 	${PYENV_PATH} \
-	gpt3-annotation/gpt3-annotation.py
+	gpt-3/automated-annotation.py

@@ -1,11 +1,6 @@
 version: '3'
 
 services:
-  gpt3-annotation:
-    container_name: gpt3-annotation
-    build:
-      context: .
-      dockerfile: gpt3-annotation/Dockerfile
   annotator:
     container_name: annotator
     build:
