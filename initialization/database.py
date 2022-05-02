@@ -17,7 +17,6 @@ PORT = int(os.getenv("DATABASE_PORT"))
 NAME = os.getenv("DATABASE_NAME")
 
 TABLES = ["unannotated_posts", "annotator", "annotations"]
-
 CURRENT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 
 class Connection:

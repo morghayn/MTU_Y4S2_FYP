@@ -33,8 +33,8 @@ def main():
                 reddit = retriever.Reddit()
 
                 # retrieving posts from reddit, and columns list from db
-                after = int(datetime(2022, 3, 1).timestamp())
-                before = int(datetime(2022, 4, 1).timestamp())
+                after = int(datetime(2022, 4, 1).timestamp())
+                before = int(datetime(2022, 5, 1).timestamp())
                 for subreddit in retriever.SUBREDDITS:
                     posts = reddit.posts__from_subreddit(subreddit, after, before)
 

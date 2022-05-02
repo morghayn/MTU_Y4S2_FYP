@@ -48,7 +48,7 @@ class Connection:
             print(f"Failed to open: {INIT_DIRECTORY}/json/{table_name}.json")
             return []
 
-    def select_random_unannotated_post(self, username):
+    def select_random_unannotated_post(self, username, minimum_upvotes):
         res = {}
 
         try:
@@ -75,7 +75,7 @@ class Connection:
                         )
                     )
             AND
-                score > 15
+                score > {minimum_upvotes}
             ORDER BY 
                 RAND()
             LIMIT 

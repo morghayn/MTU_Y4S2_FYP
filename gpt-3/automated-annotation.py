@@ -12,17 +12,20 @@ load_dotenv()
 db = database.Connection()
 openai.api_key = os.getenv("OPENAI_KEY")
 
-ENGINE = "text-babbage-001"
+ENGINE = "text-curie-001"
 ANNOTATOR_USERNAME = f"gpt-3-{ENGINE}"
-ANNOTATOR_ID = 1
+ANNOTATOR_ID = 3
 
 SENTIMENT_MAP = {"positive": 1, "neutral": 0, "negative": -1}
 
 annotator_id = ANNOTATOR_ID  # db.get_annotator_id(ANNOTATOR_USERNAME)
 
 
-def send_random_request(misses):
-    post = db.select_random_unannotated_post(ANNOTATOR_USERNAME)
+# minimum upvotes for babbage = 15
+# minimum upvotes for curie = 50
+
+def send_random_request():
+    post = db.select_random_unannotated_post(ANNOTATOR_USERNAME, 50)
     post_id = post["id"]
     prompt = f"Classify sentiment of post as either positive, neutral or negative:\n\n\nTitle:\n{post['title']}\nText:\n{post['text']}\n\nSentiment:"
     tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
@@ -61,7 +64,7 @@ def send_random_request(misses):
 misses = 0
 bad_response = 0
 for i in range(0, 10000):
-    res = send_random_request(misses)
+    res = send_random_request()
     if res is 1:
         time.sleep(1)
     elif res == 2:
