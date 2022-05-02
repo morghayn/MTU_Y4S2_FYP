@@ -1,4 +1,4 @@
-# Models
+# Algorithms
 
 This folder will house the projects files that will be used to assist in achieving the algorithm research this project has stated it would carry out.
 
@@ -10,4 +10,11 @@ The algorithms which we will be researching are as follows..
 5. Convolutional Neural Network
 6. BERT (Additional Research)
 
-We will be comparing and figuring out the best fit algorithm to deploy for automatically determining the sentiment of Reddit posts using 
+We will be comparing and figuring out the best fit algorithm to deploy for automatically determining the sentiment of Reddit posts using
+
+# Dataset
+Not every column retrieved and stored in our database will be selected for our dataset. Rather, the most useful from a training perspective will be selected. All personal identifying information will be dropped, aside from the post id. The columns selected may change at a further date under future work.
+
+| Column | Description |
+| --- | --- |
+| column_sample | description_sample | 
