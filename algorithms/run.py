@@ -24,7 +24,6 @@ def main():
     if arg_length < 2:
         print(
             "\nflags:",
-            "\n\t--compile: compiles dataset",
             "\n\t--vader: VADER algorithm analysis",
             "\n\t--bayes: Naïve Bayes algorithm analysis"
             "\n\t--svm: Support-Vector Machines algorithm analysis",
