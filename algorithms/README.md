@@ -17,4 +17,12 @@ Not every column retrieved and stored in our database will be selected for our d
 
 | Column | Description |
 | --- | --- |
-| column_sample | description_sample | 
+| id | ID of the post |
+| creation_time_utc | Time post was created |
+| subreddit_display_name | Subreddit name |
+| title | Post title |
+| text | Post body |
+| score | Amount of upvotes |
+| num_of_comments | Number of comments |
+| ticker_list | Tickers mentioned in post |
+| sentiment | Sentiment rating |
