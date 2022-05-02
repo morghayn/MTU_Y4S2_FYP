@@ -1,11 +1,12 @@
 # Module Imports
 from ctypes.wintypes import HACCEL
+from dotenv import load_dotenv
+from contextlib import closing
 import mariadb
 import sys
 import json
 import os
 
-from dotenv import load_dotenv
 load_dotenv()
 
 USER = os.getenv("DATABASE_USER")
@@ -52,43 +53,39 @@ class Connection:
         res = {}
 
         try:
-            self.dict_cursor = self.conn.cursor(dictionary=True)
-            statement = f"""
-            SELECT 
-                *
-            FROM 
-                unannotated_posts 
-            WHERE 
-                id NOT IN (
+            with closing(self.conn.cursor(dictionary=True)) as dict_cursor:
+                statement = f"""
                     SELECT 
-                    post_id
-                FROM
-                    annotations
-                WHERE
-                    annotator_id = (
-                        SELECT
-                            id
+                        *
+                    FROM 
+                        unannotated_posts 
+                    WHERE 
+                        id NOT IN (
+                            SELECT 
+                            post_id
                         FROM
-                            annotator
+                            annotations
                         WHERE
-                            username = "{username}"
-                        )
-                    )
-            AND
-                score > {minimum_upvotes}
-            ORDER BY 
-                RAND()
-            LIMIT 
-                1
-            """
-            # print(statement)
-            self.dict_cursor.execute(statement)
-            res = self.dict_cursor.fetchone()
-            self.dict_cursor.close()
-
+                            annotator_id = (
+                                SELECT
+                                    id
+                                FROM
+                                    annotator
+                                WHERE
+                                    username = "{username}"
+                                )
+                            )
+                    AND
+                        score > {minimum_upvotes}
+                    ORDER BY 
+                        RAND()
+                    LIMIT 
+                        1
+                """
+                dict_cursor.execute(statement)
+                res = dict_cursor.fetchone()
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
 
@@ -96,25 +93,21 @@ class Connection:
         res = {}
 
         try:
-            self.dict_cursor = self.conn.cursor(dictionary=True)
-            statement = f"""
-            SELECT 
-                *
-            FROM 
-                unannotated_posts 
-            WHERE 
-                id = "{id}"
-            LIMIT 
-                1
-            """
-            # print(statement)
-            self.dict_cursor.execute(statement)
-            res = self.dict_cursor.fetchone()
-            self.dict_cursor.close()
-
+            with closing(self.conn.cursor(dictionary=True)) as dict_cursor:
+                statement = f"""
+                    SELECT 
+                        *
+                    FROM 
+                        unannotated_posts 
+                    WHERE 
+                        id = "{id}"
+                    LIMIT 
+                        1
+                """
+                dict_cursor.execute(statement)
+                res = dict_cursor.fetchone()
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
 
@@ -122,15 +115,12 @@ class Connection:
         res = {}
 
         try:
-            self.dict_cursor = self.conn.cursor(dictionary=True)
-            statement = "SELECT * FROM unannotated_posts"
-            self.dict_cursor.execute(statement)
-            res = self.dict_cursor.fetchall()
-            self.dict_cursor.close()
-
+            with closing(self.conn.cursor(dictionary=True)) as dict_cursor:
+                statement = "SELECT * FROM unannotated_posts"
+                dict_cursor.execute(statement)
+                res = dict_cursor.fetchall()
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
 
@@ -138,15 +128,12 @@ class Connection:
         res = {}
 
         try:
-            self.dict_cursor = self.conn.cursor(dictionary=True)
-            statement = f"SELECT * FROM unannotated_posts WHERE score > {x}"
-            self.dict_cursor.execute(statement)
-            res = self.dict_cursor.fetchall()
-            self.dict_cursor.close()
-
+            with closing(self.conn.cursor(dictionary=True)) as dict_cursor:
+                statement = f"SELECT * FROM unannotated_posts WHERE score > {x}"
+                dict_cursor.execute(statement)
+                res = dict_cursor.fetchall()
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
 
@@ -154,36 +141,29 @@ class Connection:
         res = None
 
         try:
-            self.cursor = self.conn.cursor()
-            statement = f'SELECT id FROM annotator WHERE username = "{username}"'
-            self.cursor.execute(statement)
-            res = self.cursor.fetchone()[0]
-            self.conn.cursor().close()
-
+            with closing(self.conn.cursor()) as cursor:
+                statement = f'SELECT id FROM annotator WHERE username = "{username}"'
+                cursor.execute(statement)
+                res = cursor.fetchone()[0]
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
 
     def insert(self, table_name, data, auto_increment=False, notify=False):
         columns = self.tables[table_name]
-
         if auto_increment and "id" in columns:
             columns.remove("id")
 
         try:
-            self.cursor = self.conn.cursor()
-            self.cursor.execute(
-                f"INSERT INTO {table_name} ({','.join([str(x) for x in columns])})"
-                + f" VALUES ({','.join(['?' for x in columns])})",
-                tuple([data[i] for i in range(0, len(columns))]),
-            )
-            self.conn.commit()
-            self.cursor.close()
-            if notify:
-                print("Sucessfully inserted row.")
-
+            with closing(self.conn.cursor()) as cursor:
+                cursor.execute(
+                    f"INSERT INTO {table_name} ({','.join([str(x) for x in columns])})"
+                    + f" VALUES ({','.join(['?' for x in columns])})",
+                    tuple([data[i] for i in range(0, len(columns))]),
+                )
+                self.conn.commit()
+                if notify:
+                    print("Sucessfully inserted row.")
         except mariadb.Error as e:
             print(f"Could not insert row: {e}")
-            pass

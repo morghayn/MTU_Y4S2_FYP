@@ -1,6 +1,7 @@
 # Module Imports
 from ctypes.wintypes import HACCEL
 from dotenv import load_dotenv
+from contextlib import closing
 import mariadb
 import sys
 import json
@@ -54,26 +55,23 @@ class Connection:
         res = []
 
         try:
-            cursor = self.conn.cursor()
-            statement = f"""
-            SELECT 
-                COUNT(*)
-            FROM
-                unannotated_posts
-            WHERE
-                creation_time_utc > {after}
-            AND
-                creation_time_utc < {before}
-            AND
-                subreddit_display_name = \"{subreddit}\"
-            """
-            cursor.execute(statement)
-            res = cursor.fetchone()
-            cursor.close()
-
+            with closing(self.conn.cursor()) as cursor:
+                statement = f"""
+                    SELECT 
+                        COUNT(*)
+                    FROM
+                        unannotated_posts
+                    WHERE
+                        creation_time_utc > {after}
+                    AND
+                        creation_time_utc < {before}
+                    AND
+                        subreddit_display_name = \"{subreddit}\"
+                """
+                cursor.execute(statement)
+                res = cursor.fetchone()
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res[0]
 
@@ -81,20 +79,17 @@ class Connection:
         res = []
 
         try:
-            cursor = self.conn.cursor()
-            statement = f"""
-            SELECT 
-                ticker_list
-            FROM
-                unannotated_posts
-            """
-            cursor.execute(statement)
-            res = cursor.fetchall()
-            cursor.close()
-
+            with closing(self.conn.cursor()) as cursor:
+                statement = f"""
+                    SELECT 
+                        ticker_list
+                    FROM
+                        unannotated_posts
+                """
+                cursor.execute(statement)
+                res = cursor.fetchall()
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
 
@@ -103,29 +98,25 @@ class Connection:
         to do this we are just getting the average sentiment among all annotations made by annotator of id give in parameters
         """
         try:
-            cursor = self.conn.cursor()
-            statement = f"""
-            SELECT
-                AVG(annotations.sentiment) as average
-            FROM
-                unannotated_posts
-            RIGHT JOIN annotations
-                ON unannotated_posts.id = annotations.post_id
-            WHERE
-                annotations.annotator_id = {annotator_id}
-            AND
-                unannotated_posts.creation_time_utc > {after}
-            AND 
-                unannotated_posts.creation_time_utc < {before};
-            
-            """
-            cursor.execute(statement)
-            res = float(cursor.fetchone()[0])
-            cursor.close()
-
+            with closing(self.conn.cursor()) as cursor:
+                statement = f"""
+                    SELECT
+                        AVG(annotations.sentiment) as average
+                    FROM
+                        unannotated_posts
+                    RIGHT JOIN annotations
+                        ON unannotated_posts.id = annotations.post_id
+                    WHERE
+                        annotations.annotator_id = {annotator_id}
+                    AND
+                        unannotated_posts.creation_time_utc > {after}
+                    AND 
+                        unannotated_posts.creation_time_utc < {before};    
+                """
+                cursor.execute(statement)
+                res = float(cursor.fetchone()[0])
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
 
@@ -138,30 +129,26 @@ class Connection:
         res = 0
 
         try:
-            cursor = self.conn.cursor()
-            statement = f"""
-            SELECT
-                AVG(annotations.sentiment) as average
-            FROM
-                unannotated_posts
-            RIGHT JOIN annotations
-                ON unannotated_posts.id = annotations.post_id
-            WHERE
-                annotations.annotator_id = {annotator_id}
-            AND
-                unannotated_posts.creation_time_utc > {after}
-            AND 
-                unannotated_posts.creation_time_utc < {before}
-            AND
-                unannotated_posts.ticker_list like \"%{ticker}%\";
-            """
-            # print(statement)
-            cursor.execute(statement)
-            res = float(cursor.fetchone()[0])
-            cursor.close()
-
+            with closing(self.conn.cursor()) as cursor:
+                statement = f"""
+                    SELECT
+                        AVG(annotations.sentiment) as average
+                    FROM
+                        unannotated_posts
+                    RIGHT JOIN annotations
+                        ON unannotated_posts.id = annotations.post_id
+                    WHERE
+                        annotations.annotator_id = {annotator_id}
+                    AND
+                        unannotated_posts.creation_time_utc > {after}
+                    AND 
+                        unannotated_posts.creation_time_utc < {before}
+                    AND
+                        unannotated_posts.ticker_list like \"%{ticker}%\";
+                """
+                cursor.execute(statement)
+                res = float(cursor.fetchone()[0])
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
