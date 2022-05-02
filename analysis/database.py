@@ -1,11 +1,11 @@
 # Module Imports
 from ctypes.wintypes import HACCEL
+from dotenv import load_dotenv
 import mariadb
 import sys
 import json
 import os
 
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -22,6 +22,7 @@ INIT_DIRECTORY = INIT_DIRECTORY + "/../initialization"
 
 class Connection:
     def __init__(self) -> None:
+        print(USER, "*" * len(PASSWORD), HOST, PORT, NAME)
         try:
             self.conn = mariadb.connect(
                 user=USER,
@@ -49,8 +50,118 @@ class Connection:
             print(f"Failed to open: {INIT_DIRECTORY}/json/{table_name}.json")
             return []
 
-    def get_all_annotations(self):
-        pass
-    
-    def get_all_annotations__after_before(self):
-        pass
+    def count_unannotated(self, after, before, subreddit):
+        res = []
+
+        try:
+            cursor = self.conn.cursor()
+            statement = f"""
+            SELECT 
+                COUNT(*)
+            FROM
+                unannotated_posts
+            WHERE
+                creation_time_utc > {after}
+            AND
+                creation_time_utc < {before}
+            AND
+                subreddit_display_name = \"{subreddit}\"
+            """
+            cursor.execute(statement)
+            res = cursor.fetchone()
+            cursor.close()
+
+        except mariadb.Error as e:
+            print(f"Error retrieving entry from database: {e}")
+
+        finally:
+            return res[0]
+
+    def get_all_ticker_lists(self):
+        res = []
+
+        try:
+            cursor = self.conn.cursor()
+            statement = f"""
+            SELECT 
+                ticker_list
+            FROM
+                unannotated_posts
+            """
+            cursor.execute(statement)
+            res = cursor.fetchall()
+            cursor.close()
+
+        except mariadb.Error as e:
+            print(f"Error retrieving entry from database: {e}")
+
+        finally:
+            return res
+
+    def get_spys_average_sentiment_for_month(self, annotator_id, before, after):
+        """
+        to do this we are just getting the average sentiment among all annotations made by annotator of id give in parameters
+        """
+        try:
+            cursor = self.conn.cursor()
+            statement = f"""
+            SELECT
+                AVG(annotations.sentiment) as average
+            FROM
+                unannotated_posts
+            RIGHT JOIN annotations
+                ON unannotated_posts.id = annotations.post_id
+            WHERE
+                annotations.annotator_id = {annotator_id}
+            AND
+                unannotated_posts.creation_time_utc > {after}
+            AND 
+                unannotated_posts.creation_time_utc < {before};
+            
+            """
+            cursor.execute(statement)
+            res = float(cursor.fetchone()[0])
+            cursor.close()
+
+        except mariadb.Error as e:
+            print(f"Error retrieving entry from database: {e}")
+
+        finally:
+            return res
+
+    def get_average_sentiment_for_unknown_ticker_for_period_before_after(
+        self, annotator_id, before, after, ticker
+    ):
+        """
+        to do this we are just getting the average sentiment among all annotations made by annotator of id give in parameters
+        """
+        res = 0
+
+        try:
+            cursor = self.conn.cursor()
+            statement = f"""
+            SELECT
+                AVG(annotations.sentiment) as average
+            FROM
+                unannotated_posts
+            RIGHT JOIN annotations
+                ON unannotated_posts.id = annotations.post_id
+            WHERE
+                annotations.annotator_id = {annotator_id}
+            AND
+                unannotated_posts.creation_time_utc > {after}
+            AND 
+                unannotated_posts.creation_time_utc < {before}
+            AND
+                unannotated_posts.ticker_list like \"%{ticker}%\";
+            """
+            # print(statement)
+            cursor.execute(statement)
+            res = float(cursor.fetchone()[0])
+            cursor.close()
+
+        except mariadb.Error as e:
+            print(f"Error retrieving entry from database: {e}")
+
+        finally:
+            return res
