@@ -44,6 +44,6 @@ start-annotator:
 	annotator/app.py
 
 # gpt-3
-gpt-3:
+gpt-3-automated:
 	${PYENV_PATH} \
 	gpt-3/automated-annotation.py
