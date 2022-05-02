@@ -1,7 +1,20 @@
 from algorithm import bayes, bert, cnn, lstm, svm, vader
 import database
-import compiler as compiler
 import sys
+
+DATASET_COLUMNS = [
+    "up.id",
+    "up.creation_time_utc",
+    "up.subreddit_display_name",
+    "up.title",
+    "up.text",
+    "up.score",
+    "up.num_of_comments",
+    "up.ticker_list",
+    "a.sentiment",
+]
+# up = unannotated_posts
+# a = annotations
 
 
 def main():
@@ -25,11 +38,7 @@ def main():
         for i in range(1, arg_length):
             arg = sys.argv[i]
 
-            if arg == "--compile":
-                print("\n--compile: compiles dataset")
-                CSV = compiler.CSV()
-                CSV.compile()
-            elif arg == "--vader":
+            if arg == "--vader":
                 print()
                 vader.run()
             elif arg == "--bayes":
@@ -46,9 +55,10 @@ def main():
                 cnn.run()
             elif arg == "--bert":
                 print()
-                bert.run() 
+                bert.run()
             elif arg == "--debug":
-                print()
+                df = db.select__from__by__(DATASET_COLUMNS, "curie")
+                print(df)
 
 
 if __name__ == "__main__":
