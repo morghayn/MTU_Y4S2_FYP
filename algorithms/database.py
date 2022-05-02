@@ -1,14 +1,18 @@
 # Module Imports
 from ctypes.wintypes import HACCEL
+from contextlib import closing
 from dotenv import load_dotenv
+import pandas as pd
+import warnings
 import mariadb
 import sys
 import json
 import os
 
+# Ignoring user warning that pandas.read_sql_query is running
+warnings.simplefilter(action="ignore", category=UserWarning)
 
 load_dotenv()
-
 USER = os.getenv("DATABASE_USER")
 PASSWORD = os.getenv("DATABASE_PASSWORD")
 HOST = os.getenv("DATABASE_HOST")
@@ -35,19 +39,39 @@ class Connection:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
 
-        self.dict_cursor = self.conn.cursor(dictionary=True)
-        self.cursor = self.conn.cursor()
-        self.init_tables()
+    def select__from__by__(self, columns, annotator):
+        """
+        Will return DataFrame of specified columns from unannotated_posts
+        where an annotation has been provided in annotations
+        by the annotator specified by their username
+        """
+        df = pd.DataFrame()
 
-    def init_tables(self):
-        self.tables = {}
-        for table_name in TABLES:
-            self.tables[table_name] = self.import_columns(table_name)
-
-    def import_columns(self, table_name):
         try:
-            file = open(f"{INIT_DIRECTORY}/json/{table_name}.json")
-            return [column for column, meta_data in json.load(file)["COLUMNS"].items()]
-        except:
-            print(f"Failed to open: {INIT_DIRECTORY}/json/{table_name}.json")
-            return []
+            statement = f"""
+                SELECT
+                    {",".join([str(x) for x in columns])}
+                FROM 
+                    unannotated_posts AS up
+                INNER JOIN 
+                    annotations as a
+                ON
+                    up.id = a.post_id
+                WHERE
+                    annotator_id = (
+                        SELECT
+                            id
+                        FROM
+                            annotator
+                        WHERE
+                            username like "%{annotator}%"
+                        LIMIT
+                            1
+                    );
+                """
+            # This is giving an error, but it is also working, so I guess we will proceed with caution?
+            df = pd.read_sql(statement, self.conn)
+        except mariadb.Error as e:
+            print(f"Error retrieving entry from database: {e}")
+        finally:
+            return df

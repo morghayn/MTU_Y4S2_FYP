@@ -49,10 +49,8 @@ class Connection:
                 """
                 dict_cursor.execute(statement)
                 res = dict_cursor.fetchone()
-
         except mariadb.Error as e:
             print(f"Error retrieving entry from database: {e}")
-
         finally:
             return res
 

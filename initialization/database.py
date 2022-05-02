@@ -89,7 +89,6 @@ class Connection:
     def drop_table(self, table_name):
         try:
             with closing(self.conn.cursor()) as cursor:
-                cursor = self.conn.cursor()
                 cursor.execute("DROP TABLE " + table_name)
                 print(f"Successfully dropped table '{table_name}'.")
         except mariadb.Error as e:
