@@ -34,6 +34,8 @@ def main():
         )
 
     else:
+        df = db.select__from__by__(DATASET_COLUMNS, "curie")
+
         for i in range(1, arg_length):
             arg = sys.argv[i]
 
@@ -41,11 +43,10 @@ def main():
                 print()
                 vader.run()
             elif arg == "--bayes":
-                print()
-                bayes.run()
+                bayes.run(df)
             elif arg == "--svm":
                 print()
-                svm.run()
+                svm.run(df)
             elif arg == "--lstm":
                 print()
                 lstm.run()
