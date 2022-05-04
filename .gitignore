@@ -2,3 +2,4 @@
 *.pem
 __pycache__
 initialization/json/*
+*.tutorial.py
