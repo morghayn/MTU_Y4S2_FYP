@@ -6,7 +6,6 @@ import pandas as pd
 import warnings
 import mariadb
 import sys
-import json
 import os
 
 # Ignoring user warning that pandas.read_sql_query is running
