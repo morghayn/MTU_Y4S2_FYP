@@ -17,6 +17,10 @@ DATASET_COLUMNS = [
 # a = annotations
 
 
+def notify(algorithm):
+    print(f"Starting {algorithm}.")
+
+
 def main():
     arg_length = len(sys.argv)
     db = database.Connection()
@@ -35,30 +39,31 @@ def main():
 
     else:
         df = db.select__from__by__(DATASET_COLUMNS, "curie")
+        # df.to_excel("reddit_data.xlsx", sheet_name='curie')
 
         for i in range(1, arg_length):
             arg = sys.argv[i]
 
             if arg == "--vader":
-                print()
-                vader.run()
+                notify("VADER")
+                vader.run(df)
             elif arg == "--bayes":
+                notify("Naive Bayes")
                 bayes.run(df)
             elif arg == "--svm":
-                print()
+                notify("SVM")
                 svm.run(df)
             elif arg == "--lstm":
-                print()
-                lstm.run()
+                print("LSTM")
+                lstm.run(df)
             elif arg == "--cnn":
-                print()
-                cnn.run()
+                notify("CNN")
+                cnn.run(df)
             elif arg == "--bert":
-                print()
-                bert.run()
+                notify("BERT")
+                bert.run(df)
             elif arg == "--debug":
-                df = db.select__from__by__(DATASET_COLUMNS, "curie")
-                print(df)
+                notify("Debugging")
 
 
 if __name__ == "__main__":
