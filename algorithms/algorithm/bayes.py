@@ -17,7 +17,7 @@ def run(df):
    y_predictions = np.empty([0], dtype=int)
 
    kfold = KFold(n_splits=10, random_state=42, shuffle=True)
-   for train, test in tqdm(kfold.split(df)):
+   for train, test in tqdm(kfold.split(df), total=kfold.get_n_splits(), desc="K-Fold"):
       x_train, y_train, x_test, y_test = tokenize(df.iloc[train], df.iloc[test])
       model = MultinomialNB()
       model.fit(x_train, y_train)
