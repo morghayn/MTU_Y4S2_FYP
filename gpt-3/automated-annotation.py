@@ -25,7 +25,7 @@ annotator_id = ANNOTATOR_ID  # db.get_annotator_id(ANNOTATOR_USERNAME)
 # minimum upvotes for curie = 50
 
 def send_random_request():
-    post = db.select_random_unannotated_post(ANNOTATOR_USERNAME, 50)
+    post = db.select_random_unannotated_post(ANNOTATOR_USERNAME, 10)
     post_id = post["id"]
     prompt = f"Classify sentiment of post as either positive, neutral or negative:\n\n\nTitle:\n{post['title']}\nText:\n{post['text']}\n\nSentiment:"
     tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
