@@ -6,7 +6,7 @@ import mariadb
 import sys
 import json
 import os
-
+import pandas as pd
 
 load_dotenv()
 
@@ -50,6 +50,43 @@ class Connection:
         except:
             print(f"Failed to open: {INIT_DIRECTORY}/json/{table_name}.json")
             return []
+
+    def select__from__by__(self, columns, annotator, subreddit):
+        """
+        Will return DataFrame of specified columns from unannotated_posts
+        where an annotation has been provided in annotations
+        by the annotator specified by their username
+        """
+        df = pd.DataFrame()
+
+        try:
+            statement = f"""
+                SELECT
+                    {",".join([str(x) for x in columns])}
+                FROM 
+                    unannotated_posts AS up
+                INNER JOIN 
+                    annotations as a
+                ON
+                    up.id = a.post_id
+                WHERE
+                    annotator_id = (
+                        SELECT
+                            id
+                        FROM
+                            annotator
+                        WHERE
+                            username like "%{annotator}%"
+                        LIMIT
+                            1
+                    );
+                """
+            # This is giving an error, but it is also working, so I guess we will proceed with caution?
+            df = pd.read_sql(statement, self.conn)
+        except mariadb.Error as e:
+            print(f"Error retrieving entry from database: {e}")
+        finally:
+            return df
 
     def count_unannotated(self, after, before, subreddit):
         res = []

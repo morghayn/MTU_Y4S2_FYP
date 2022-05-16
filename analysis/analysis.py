@@ -2,6 +2,10 @@ import database
 import pandas as pd
 
 from datetime import datetime
+import database
+import re
+from nltk.corpus import stopwords
+
 
 ANNOTATOR_ID = 3
 
@@ -130,3 +134,57 @@ def get_average_sentiment_for_unknown_ticker_for_period_before_after(ticker):
         )
         average_sentiments.append(average_sentiment_for_month)
     return average_sentiments
+
+
+def data_preprocessing(df, drop_neutral=True):
+    """
+    Data Pre-processing
+    """
+    # creating new dataframe with specific columns
+    df = df[["title", "text", "sentiment"]].copy()
+
+    # appending title as start of text cells and then dropping title column from df
+    df.text = df.title.astype(str) + "\n" + df.text
+    df = df.drop(columns=["title"])
+
+    if drop_neutral:
+        # Dropping neutral row....
+        df.drop(df.loc[df["sentiment"] == 0].index, inplace=True)
+        df.reset_index(drop=True, inplace=True)
+
+    # # Relabeling -1 Negative label to 0, This has no effect on result
+    df["sentiment"].replace({-1: 0}, inplace=True)
+
+    # nltk.download('stopwords')
+    stop_words = set(stopwords.words("english"))
+
+    corpus = []
+    for i in range(0, len(df)):
+        review = re.sub("@\S+|https?:\S+|http?:\S|[^A-Za-z0-9]+", " ", df.text[i])
+        # review = review.lower()
+        review = review.split()
+        review = [word for word in review if not word in stop_words]
+        review = " ".join(review)
+        corpus.append(review)
+    df.text = corpus
+
+    return df
+
+
+def retrieve_annotations_by__from__(annotator_username, subreddit):
+    dataset_columns = [
+        "up.id",
+        "up.creation_time_utc",
+        "up.subreddit_display_name",
+        "up.title",
+        "up.text",
+        "up.score",
+        "up.num_of_comments",
+        "up.ticker_list",
+        "a.sentiment",
+    ]
+
+    db = database.Connection()
+    df = db.select__from__by__(dataset_columns, annotator_username, subreddit)
+    df = data_preprocessing(df)
+    return df

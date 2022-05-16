@@ -4,6 +4,8 @@ import seaborn as sns
 import pandas as pd
 from datetime import datetime
 import numpy as np
+import wordcloud
+
 
 MONTHS = [
     "21-Apr",
@@ -118,6 +120,23 @@ def our_dataset():
     selected = [4158, 1645, 4615]
 
 
+def word_cloud_cloud__for__by(annotator_username, subreddit):
+    df = analysis.retrieve_annotations_by__from__("curie", "stocks")
+    common_words = ""
+    fig, ax = plt.figure(), plt.subplot(111)
+    for i in df.text:
+        i = str(i)
+        tokens = i.split()
+        common_words += " ".join(tokens) + " "
+    word_cloud = wordcloud.WordCloud(
+        collocations=False, background_color="white", width=1920, height=1080
+    ).generate(common_words)
+
+    ax.imshow(word_cloud, interpolation="bilinear")
+    ax.axis("off")
+    plt.show()
+
+
 def graphs():
     sns.set_style("whitegrid")
     sns.set_context("poster")
@@ -129,12 +148,13 @@ def graphs():
     for i, ticker in enumerate(t):
         print(f"{ticker}\t{f[i]}")
 
-    _price_movement_with_reddit_sentiment("TSLA")
-    _price_movement_with_reddit_sentiment("AAPL")
-    _price_movement_with_reddit_sentiment("AMZN")
-    _price_movement_with_reddit_sentiment("MSFT")
-    _price_movement_with_reddit_sentiment("TWTR")
-    _price_movement_with_reddit_sentiment("ALL")
+    # _price_movement_with_reddit_sentiment("TSLA")
+    # _price_movement_with_reddit_sentiment("AAPL")
+    # _price_movement_with_reddit_sentiment("AMZN")
+    # _price_movement_with_reddit_sentiment("MSFT")
+    # _price_movement_with_reddit_sentiment("TWTR")
+    # _price_movement_with_reddit_sentiment("ALL")
+    word_cloud_cloud__for__by("curie", "stocks")
     plt.show()
 
 
