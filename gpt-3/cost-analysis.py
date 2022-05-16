@@ -7,6 +7,7 @@ db = database.Connection()
 ADA_COST = 0.0006
 BABBAGE_COST = 0.0012
 CURIE_COST = 0.0060
+DAV_COST = 0.06
 
 ENGINE = "text-babbage-001"
 ANNOTATOR_USERNAME = f"gpt-3-{ENGINE}"
@@ -19,6 +20,7 @@ def print_cost(length, message):
     print(f"Ada: ${(tokens/1000) * ADA_COST:.5f}")
     print(f"Babbage: ${(tokens/1000) * BABBAGE_COST:.5f}")
     print(f"Curie: ${(tokens/1000) * CURIE_COST:.5f}")
+    print(f"DaVinci: ${(tokens/1000) * DAV_COST:.5f}")
 
 
 # # Single Random Post Cost
