@@ -49,9 +49,21 @@ def spy_price_movement_with_reddit_sentiment():
         analysis.get_monthly_price_change_ticker_from_yahoo_finance_api(
             "SPY",
             int(datetime(2021, 4, 1).timestamp()),
-            int(datetime(2022, 5, 1).timestamp()),
+            int(datetime(2022, 5, 5).timestamp()),
         )
     )
+
+    """
+    Warning, there is consistently an issue where additional months get added here causing a data mismatch, 
+    that is why we have the following line
+    """
+    if len(monthly_sentiment) != len(monthly_price_change):
+        print(
+            "Error there is a data mismatch",
+            len(monthly_sentiment),
+            len(monthly_price_change),
+        )
+        return
 
     # Plotting negative price changes
     negative_price_changes = [0 if i > 0 else i for i in monthly_price_change]
@@ -74,6 +86,23 @@ def spy_price_movement_with_reddit_sentiment():
     ax.set_title("S&P500 Price Movement with Reddit Sentiment")
 
 
+def spy_pearson_correlation_coefficient():
+    fig, ax = plt.figure(), plt.subplot(111)
+    monthly_sentiment = analysis.get_average_sentiment_each_month_for_spy()
+    monthly_price_change = (
+        analysis.get_monthly_price_change_ticker_from_yahoo_finance_api(
+            "SPY",
+            int(datetime(2021, 4, 1).timestamp()),
+            int(datetime(2022, 5, 5).timestamp()),
+        )
+    )
+
+    ax.scatter(monthly_sentiment, monthly_price_change, marker="o")
+    ax.set_title(f"Monthly Sentiment vs Monthly Price Change")
+    ax.set_ylabel("Price Change (%)")
+    ax.set_xlabel("Sentiment (-1 to 1)")
+
+
 def _price_movement_with_reddit_sentiment(ticker):
     """
     Here we will have a bar chart consisting of the monthly price changes (as %) of spy
@@ -89,9 +118,21 @@ def _price_movement_with_reddit_sentiment(ticker):
         analysis.get_monthly_price_change_ticker_from_yahoo_finance_api(
             f"{ticker}",
             int(datetime(2021, 4, 1).timestamp()),
-            int(datetime(2022, 5, 1).timestamp()),
+            int(datetime(2022, 5, 5).timestamp()),
         )
     )
+
+    """
+    Warning, there is consistently an issue where additional months get added here causing a data mismatch, 
+    that is why we have the following line
+    """
+    if len(monthly_sentiment) != len(monthly_price_change):
+        print(
+            "Error there is a data mismatch",
+            len(monthly_sentiment),
+            len(monthly_price_change),
+        )
+        return
 
     # Plotting negative price changes
     negative_price_changes = [0 if i > 0 else i for i in monthly_price_change]
@@ -141,20 +182,20 @@ def graphs():
     sns.set_style("whitegrid")
     sns.set_context("poster")
 
-    # top_x_mentioned_tickers(17)
-    # spy_price_movement_with_reddit_sentiment()
-    # _price_movement_with_reddit_sentiment("AWK")
-    t, f = analysis.get_top_x_mentioned_tickers(75)
-    for i, ticker in enumerate(t):
-        print(f"{ticker}\t{f[i]}")
+    # t, f = analysis.get_top_x_mentioned_tickers(75)
+    # for i, ticker in enumerate(t):
+    #     print(f"{ticker}\t{f[i]}")
 
-    # _price_movement_with_reddit_sentiment("TSLA")
+    top_x_mentioned_tickers(10)
+    # spy_price_movement_with_reddit_sentiment()
+    _price_movement_with_reddit_sentiment("TWTR")
     # _price_movement_with_reddit_sentiment("AAPL")
     # _price_movement_with_reddit_sentiment("AMZN")
     # _price_movement_with_reddit_sentiment("MSFT")
     # _price_movement_with_reddit_sentiment("TWTR")
     # _price_movement_with_reddit_sentiment("ALL")
-    word_cloud_cloud__for__by("curie", "stocks")
+    # word_cloud_cloud__for__by("curie", "stocks")
+    spy_pearson_correlation_coefficient()
     plt.show()
 
 
