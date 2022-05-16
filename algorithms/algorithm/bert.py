@@ -42,7 +42,8 @@ from sklearn.metrics import (
 )
 
 from nltk.corpus import stopwords
-from .graphing import graph_and_stats
+from utilities.plot import plot_model_history, plot_confusion_matrix, print_statistics
+
 
 LENGTH = 256
 
@@ -112,7 +113,8 @@ def load(df):
 
     p = pipe(x_test, **tokenizer_kwargs)
     y_pred = get_predictions(p)
-    graph_and_stats(y_test, y_pred, "BERT")
+    print_statistics(y_test, y_pred)
+    plot_confusion_matrix(y_test, y_pred, "BERT")
     plt.show()
 
 
