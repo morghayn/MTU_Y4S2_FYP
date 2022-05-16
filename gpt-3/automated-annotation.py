@@ -65,7 +65,7 @@ misses = 0
 bad_response = 0
 for i in range(0, 10000):
     res = send_random_request()
-    if res is 1:
+    if res == 1:
         time.sleep(1)
     elif res == 2:
         bad_response += 1

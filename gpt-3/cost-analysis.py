@@ -21,22 +21,22 @@ def print_cost(length, message):
     print(f"Curie: ${(tokens/1000) * CURIE_COST:.5f}")
 
 
-# Single Random Post Cost
-post = db.select_random_unannotated_post(ANNOTATOR_USERNAME)
-prompt = "Classify sentiment of post as either positive, neutral or negative:\n\n"
-prompt += f"\nTitle:\n{post['title']}\nText:\n{post['text']}\n\n"
-prompt += "Sentiment:"
-print_cost(len(prompt), "\n\nSingle Random Post Total Cost")
+# # Single Random Post Cost
+# post = db.select_random_unannotated_post(ANNOTATOR_USERNAME, 20)
+# prompt = "Classify sentiment of post as either positive, neutral or negative:\n\n"
+# prompt += f"\nTitle:\n{post['title']}\nText:\n{post['text']}\n\n"
+# prompt += "Sentiment:"
+# print_cost(len(prompt), "\n\nSingle Random Post Total Cost")
 
 
 # All Post Cost
-posts = db.select_all_posts()
-prompts = ""
-for post in posts:
-    prompts += "Classify sentiment of post as either positive, neutral or negative:\n\n"
-    prompts += f"\nTitle:\n{post['title']}\nText:\n{post['text']}\n\n"
-    prompts += "Sentiment:"
-print_cost(len(prompts), "\n\nAll Posts Total Cost")
+# posts = db.select_all_posts()
+# prompts = ""
+# for post in posts:
+#     prompts += "Classify sentiment of post as either positive, neutral or negative:\n\n"
+#     prompts += f"\nTitle:\n{post['title']}\nText:\n{post['text']}\n\n"
+#     prompts += "Sentiment:"
+# print_cost(len(prompts), "\n\nAll Posts Total Cost")
 
 
 # Posts greater than x upvotes
