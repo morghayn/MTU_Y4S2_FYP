@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Homepage</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:100,100i,400,400i,700,700i" rel="stylesheet">
+    <script src="./script.js"></script>
+</head>
+
+<body>
+    <header></header>
+    <main>
+        {%for post in polls %}
+        <h4>{{loop.index}}. <span style="color: coral;">[{{ post['subreddit_display_name']}}]</span> {{ post['title'] }}</h4>
+        <p id="text">{{ post['text']|safe }}</p>
+        {%endfor%}
+    </main>
+</body>
+
+</html>
