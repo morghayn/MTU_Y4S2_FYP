@@ -5,6 +5,16 @@ i.e.,:
 1. [database.py](/initialization/database.py) has been written to accept generic inputs. Nothing is hardcoded and we should be able to add as many new MySQL (MariaDB in our case) tables with ease. 
 2. [create_table_json.py](/initialization/create_table_json.py) allows us to write out our SQL tables as dictionaries and export them in JSON format for later parsing. This is purely due to personal preference/opinion, but dictionaries/JSON is a very readable and maintainble format to write SQL.
 
+# Dataset Range
+|Entry|Date|
+|---|---|
+|Dataset Start|Tue Jan 01 2019 00:31:03 GMT+0000|
+|Blackout Period #1 - Start|Wed Jan 20 2021 00:00:00 GMT+0000|
+|Blackout Period #1 - End|Sat Jan 30 2021 11:59:59 GMT+0000|
+|Dataset End|Mon Apr 25 2022 13:25:02 GMT+0000|
+
+The cause for the first blackout period was due to a huge spike of posts (100,000 posts per day) on Wallstreet bets in and around the 25th of January 2021.
+
 # Notes
 ## What is the "initial insertion"?
 The initial insertion is whereby we fetch posts from the past year that meet the criteria we defined, a post/comment mentioning a company's name or stock ticker that is enlisted within the S&P500 index.
