@@ -38,7 +38,7 @@ def main():
         )
 
     else:
-        df = db.select__from__by__(DATASET_COLUMNS, "curie")
+        df = db.select_columns_annoatoted_by(DATASET_COLUMNS, "curie")
         # df.to_excel("reddit_data.xlsx", sheet_name='curie')
 
         for i in range(1, arg_length):

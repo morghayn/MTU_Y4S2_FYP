@@ -38,7 +38,7 @@ class Connection:
             print(f"Error connecting to MariaDB Platform: {e}")
             sys.exit(1)
 
-    def select__from__by__(self, columns, annotator):
+    def select_columns_annoatoted_by(self, columns, annotator):
         """
         Will return DataFrame of specified columns from unannotated_posts
         where an annotation has been provided in annotations
