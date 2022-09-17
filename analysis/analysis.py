@@ -10,31 +10,6 @@ from nltk.corpus import stopwords
 ANNOTATOR_ID = 3
 
 
-def count_unannotated_per_month(subreddit):
-    """
-    counts number of unannotated posts pulled per month
-    """
-    db = database.Connection()
-    year = 2021
-    months = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5]
-
-    for i, month in enumerate(months):
-        # if last item in list break
-        if i == len(months) - 1:
-            break
-
-        after = int(datetime(year, month, 1).timestamp())
-
-        # increment on new year
-        if months[i + 1] == 1:
-            year += 1
-
-        before = int(datetime(year, months[i + 1], 1).timestamp())
-        count = db.count_unannotated(after, before, subreddit)
-
-        print(f"After: {after}\tBefore: {before}\tCount: {count}")
-
-
 def get_monthly_price_change_ticker_from_yahoo_finance_api(ticker, start, end):
     interval = "1mo"
     query_string = f"https://query1.finance.yahoo.com/v7/finance/download/{ticker}?period1={start}&period2={end}&interval={interval}&events=history&includeAdjustedClose=true"
@@ -188,3 +163,56 @@ def retrieve_annotations_by__from__(annotator_username, subreddit):
     df = db.select__from__by__(dataset_columns, annotator_username, subreddit)
     df = data_preprocessing(df)
     return df
+
+
+def get_average_weekly_sentiment(ticker):
+    db = database.Connection()
+
+    # Retrieving sentiment and creation_time_utc column from Database
+    df = db.select__from__by__(["sentiment", "creation_time_utc"], "curie", "#")
+
+    # Creating date column by converting creation_time_utc to datatime object
+    df['date'] = pd.to_datetime(df['creation_time_utc'], unit='s')
+
+    # Resampling / grouping by week on date column
+    df = df.resample('W-MON', on='date')['sentiment'].mean()
+
+    return df
+
+
+def get_weekly(ticker):
+    df = get_average_weekly_sentiment(ticker)
+    df = df.reset_index()
+
+    # Yahoo Finance Query
+    start = int(df.head(1).date.item().timestamp())
+    end = int(df.tail(1).date.item().timestamp())
+
+    interval = "1wk"
+    query_string = f"https://query1.finance.yahoo.com/v7/finance/download/{ticker}?period1={start}&period2={end}&interval={interval}&events=history&includeAdjustedClose=true"
+    yahoo_df = pd.read_csv(query_string)
+
+    """
+    If different lengths, 
+    this is more than likely due to the last date of our dataset falling on a Monday.
+    To remediate this, we will drop this row.
+    """
+    df = df.drop(1)
+
+    # Processing weekly price change
+    weekly_price_change = []
+    for index, row in yahoo_df.iterrows():
+        open = row["Open"]
+        close = row["Close"]
+        change = ((close - open) / open) * 100
+        weekly_price_change.append(change)
+
+    # Processing weekly average sentiment
+    weekly_average_sentiment = df['sentiment'].to_list()
+
+    # Getting weeks
+    weeks = list(range(len(df)))
+    # weeks = df.date.dt.strftime('%Y-%m-%d').to_list()
+    # print(weeks)
+    
+    return weeks, weekly_price_change, weekly_average_sentiment
