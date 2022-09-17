@@ -178,6 +178,32 @@ def word_cloud_cloud__for__by(annotator_username, subreddit):
     plt.show()
 
 
+def weekly(ticker):
+    fig, ax = plt.figure(), plt.subplot(111)
+    weeks, weekly_price_change, weekly_average_sentiment = analysis.get_weekly(ticker)
+
+    # Plotting negative price changes
+    negative_price_changes = [0 if i > 0 else i for i in weekly_price_change]
+    print(len(negative_price_changes))
+    ax.bar(weeks, negative_price_changes, width=1, color="r")
+
+    # Plotting positive price changes
+    positive_price_changes = [0 if i < 0 else i for i in weekly_price_change]
+    ax.bar(weeks, positive_price_changes, width=1, color="g")
+
+    # Plotting Reddit sentiment
+    amplifier = abs(max(weekly_price_change, key=abs))
+    monthly_sentiment_amplified = [i * amplifier for i in weekly_average_sentiment]
+    ax.plot(monthly_sentiment_amplified, color="b", label="sentiment")
+
+    # Making final adjustments to plot...
+    ax.legend(loc="lower left")
+    # ax.set_xticks(weeks)
+    ax.set_xticks(np.arange(min(weeks), max(weeks)+1, 5))
+    ax.set_ylabel("Price Change in %")
+    ax.set_xlabel("Week")
+    ax.set_title(f"Weekly {ticker} Price Movement with Reddit Sentiment")
+
 def graphs():
     sns.set_style("whitegrid")
     sns.set_context("poster")
@@ -186,16 +212,21 @@ def graphs():
     # for i, ticker in enumerate(t):
     #     print(f"{ticker}\t{f[i]}")
 
-    top_x_mentioned_tickers(10)
+    # top_x_mentioned_tickers(10)
     # spy_price_movement_with_reddit_sentiment()
-    _price_movement_with_reddit_sentiment("TWTR")
+    # _price_movement_with_reddit_sentiment("C")
     # _price_movement_with_reddit_sentiment("AAPL")
     # _price_movement_with_reddit_sentiment("AMZN")
     # _price_movement_with_reddit_sentiment("MSFT")
     # _price_movement_with_reddit_sentiment("TWTR")
     # _price_movement_with_reddit_sentiment("ALL")
     # word_cloud_cloud__for__by("curie", "stocks")
-    spy_pearson_correlation_coefficient()
+    # spy_pearson_correlation_coefficient()
+    # weekly("SPY")
+    # weekly("TSLA")
+    # weekly("MSFT")
+    # weekly("TWTR")
+    weekly("C")
     plt.show()
 
 
