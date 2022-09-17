@@ -89,28 +89,6 @@ class Connection:
         finally:
             return res
 
-    def select_post_by_id(self, id):
-        res = {}
-
-        try:
-            with closing(self.conn.cursor(dictionary=True)) as dict_cursor:
-                statement = f"""
-                    SELECT 
-                        *
-                    FROM 
-                        unannotated_posts 
-                    WHERE 
-                        id = "{id}"
-                    LIMIT 
-                        1
-                """
-                dict_cursor.execute(statement)
-                res = dict_cursor.fetchone()
-        except mariadb.Error as e:
-            print(f"Error retrieving entry from database: {e}")
-        finally:
-            return res
-
     def select_all_posts(self):
         res = {}
 
@@ -167,3 +145,28 @@ class Connection:
                     print("Sucessfully inserted row.")
         except mariadb.Error as e:
             print(f"Could not insert row: {e}")
+
+    """
+    Functions that are currently not utilized/in-use.
+    """
+    def select_post_by_id(self, id):
+        res = {}
+
+        try:
+            with closing(self.conn.cursor(dictionary=True)) as dict_cursor:
+                statement = f"""
+                    SELECT 
+                        *
+                    FROM 
+                        unannotated_posts 
+                    WHERE 
+                        id = "{id}"
+                    LIMIT 
+                        1
+                """
+                dict_cursor.execute(statement)
+                res = dict_cursor.fetchone()
+        except mariadb.Error as e:
+            print(f"Error retrieving entry from database: {e}")
+        finally:
+            return res

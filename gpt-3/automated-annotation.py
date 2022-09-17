@@ -14,15 +14,11 @@ openai.api_key = os.getenv("OPENAI_KEY")
 
 ENGINE = "text-curie-001"
 ANNOTATOR_USERNAME = f"gpt-3-{ENGINE}"
-ANNOTATOR_ID = 3
 
 SENTIMENT_MAP = {"positive": 1, "neutral": 0, "negative": -1}
 
-annotator_id = ANNOTATOR_ID  # db.get_annotator_id(ANNOTATOR_USERNAME)
+annotator_id = db.get_annotator_id(ANNOTATOR_USERNAME)
 
-
-# minimum upvotes for babbage = 15
-# minimum upvotes for curie = 50
 
 def send_random_request():
     post = db.select_random_unannotated_post(ANNOTATOR_USERNAME, 10)
