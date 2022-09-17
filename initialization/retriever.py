@@ -19,9 +19,9 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 USER_AGENT = os.getenv("USER_AGENT")
 
 SUBREDDITS = [
-    "stocks",  # 34 matches out of 210 posts
-    "stockmarket",  # 11 matches out of 98 posts
-    "wallstreetbets",  # 124 matches out of 1098 posts
+    "stocks",
+    "stockmarket",
+    "wallstreetbets",
 ]
 
 df = pd.read_csv("s&p-500.csv")
